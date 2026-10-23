@@ -1,0 +1,2 @@
+supabase-js 2.117.3 (MIT), UMD-Bundle aus dem npm-Paket @supabase/supabase-js@2.117.3.
+So aktualisieren: npm pack @supabase/supabase-js@<Version>, dist/umd/supabase.js hierher kopieren, die Version hier eintragen.

@@ -1,0 +1,16 @@
+/* Grundregeln, die vorher von der Claude-Seite mitgebracht wurden. */
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;padding:0}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
+
+/* Anmeldeseite: deckt alles ab, bis eine gültige Sitzung da ist. */
+.gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:var(--bg);overflow:auto}
+.gate-card{width:100%;max-width:400px;background:var(--card);border-radius:24px;padding:28px 24px 24px}
+.gate-card .logo{margin-bottom:18px}
+.gate-card .h2{margin-bottom:14px}
+.gate-msg{min-height:1.45em;margin:0 0 14px;font-size:14px;color:var(--ink-2)}
+.gate-msg[data-bad="1"]{color:var(--accent)}
+.gate-link{display:block;margin:16px auto 0;border:0;background:transparent;color:var(--ink-2);text-decoration:underline;padding:6px;font-size:14px}
+.gate-link:disabled{opacity:.5}

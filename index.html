@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qwgzimxbbfaprdbucgyx.supabase.co wss://qwgzimxbbfaprdbucgyx.supabase.co; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#121412">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="cockpit.">
+<title>cockpit.</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<script src="js/boot-theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/cockpit.css">
+<link rel="stylesheet" href="css/basis.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="logo" aria-label="cockpit">cockpit<i></i></div>
+    <nav class="nav" id="nav" aria-label="Bereiche">
+      <button type="button" data-tab="overview">Übersicht</button>
+      <button type="button" data-tab="training">Training</button>
+      <button type="button" data-tab="nutrition">Ernährung</button>
+      <button type="button" data-tab="body">Wissen</button>
+    </nav>
+    <div class="tools">
+      <button type="button" class="iconbtn" id="btn-theme" aria-label="Darstellung wechseln" title="Darstellung wechseln"></button>
+      <button type="button" class="iconbtn" id="btn-export" aria-label="Daten als Backup herunterladen" title="Backup herunterladen"></button>
+      <button type="button" class="iconbtn" id="btn-logout" aria-label="Abmelden" title="Abmelden"></button>
+    </div>
+  </header>
+  <main id="view" lang="de" aria-live="polite"></main>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<dialog id="confirm-dlg" aria-labelledby="confirm-t">
+  <div class="dlg">
+    <h2 class="h2" id="confirm-t"></h2>
+    <p id="confirm-p" style="color:var(--ink-2);font-size:14px;margin:8px 0 14px"></p>
+    <ul class="conflist" id="confirm-list"></ul>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+      <button type="button" class="btn pri" id="confirm-ok">Überschreiben</button>
+      <button type="button" class="btn" id="confirm-cancel">Abbrechen</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Anmeldung: liegt über allem, bis eine gültige Sitzung da ist. Eine Registrierung gibt es nicht. -->
+<div class="gate" id="gate">
+  <form class="gate-card" id="gate-form" data-mode="login" autocomplete="on" novalidate hidden>
+    <div class="logo" aria-hidden="true">cockpit<i></i></div>
+    <h1 class="h2" id="gate-t">Anmelden</h1>
+    <p class="gate-msg" id="gate-msg" role="alert" aria-live="assertive"></p>
+    <div class="fgroup" id="gate-email-wrap">
+      <label class="lbl" for="gate-email">E-Mail</label>
+      <input class="field" id="gate-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false">
+    </div>
+    <div class="fgroup" id="gate-pw-wrap">
+      <label class="lbl" for="gate-pw">Passwort</label>
+      <input class="field" id="gate-pw" name="password" type="password" autocomplete="current-password">
+    </div>
+    <div class="fgroup" id="gate-pw2-wrap" hidden>
+      <label class="lbl" for="gate-pw2">Neues Passwort (mindestens 8 Zeichen)</label>
+      <input class="field" id="gate-pw2" name="new-password" type="password" autocomplete="new-password" minlength="8">
+    </div>
+    <button type="submit" class="btn pri block" id="gate-submit">Anmelden</button>
+    <button type="button" class="gate-link" id="gate-reset">Passwort vergessen?</button>
+  </form>
+</div>
+
+<!-- Bibliothek und Konfiguration, dann die Verbindung, dann die Seite in der Reihenfolge der Dateinummern. -->
+<script src="js/vendor/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/db-supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/01-grundlagen.js"></script>
+<script src="js/02-datenbank.js"></script>
+<script src="js/03-oberflaeche.js"></script>
+<script src="js/04-berechnungen.js"></script>
+<script src="js/05-kopfzeile-dialoge.js"></script>
+<script src="js/06-uebersicht.js"></script>
+<script src="js/07-ernaehrung.js"></script>
+<script src="js/08-aktivitaeten-wasser.js"></script>
+<script src="js/09-training-heute.js"></script>
+<script src="js/10-training-plan.js"></script>
+<script src="js/11-uebungsbibliothek.js"></script>
+<script src="js/12-wissen-daten.js"></script>
+<script src="js/13-wissen-sammlung.js"></script>
+<script src="js/14-start.js"></script>
+</body>
+</html>
