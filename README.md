@@ -32,7 +32,7 @@ js/
   13-wissen-sammlung.js  Reiter Wissen: Anzeige und Bearbeiten
   14-start.js         Start
   vendor/supabase.js  Supabase-Bibliothek (supabase-js, MIT), Version in VERSION.txt
-supabase/migrations/  Datenbankschema, Zugriffsregeln, Registrierungssperre
+supabase/migrations/  Datenbankschema, Zugriffsregeln, Registrierungssperre, Funktion log_meal (Mahlzeit von außen eintragen)
 tests/                Browser-Tests mit nachgebautem Supabase
 docs/AUFBAU.md        Ausführliche Beschreibung (Datenmodell, Datenfluss, Entscheidungen)
 ```

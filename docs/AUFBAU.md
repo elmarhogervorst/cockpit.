@@ -74,6 +74,21 @@ Details:
 - **Fehler:** Netzfehler → `unavailable` (die Schreibwarteschlange versucht es einmal erneut), fehlende Rechte/abgelaufene Sitzung →
   `revoked` („Melde dich neu an“), `P0002` → `not-found`.
 
+## 4b. Einträge von außen: `log_meal`
+
+Damit Werkzeuge außerhalb der Seite (zum Beispiel der Claude-Skill „logge-essen“) Mahlzeiten eintragen können, ohne SQL für
+das Dokumentformat zusammenzubauen, gibt es die Datenbankfunktion `public.log_meal(p_meal jsonb, p_day date default null)`
+(`supabase/migrations/0003_mahlzeit_eintragen.sql`). Sie macht dasselbe wie das Formular im Reiter Ernährung:
+
+- hängt die Mahlzeit an `days/<Datum>.meals` an und legt den Tag bei Bedarf an (ein Aufruf = ein atomarer Schritt),
+- bei `ingredients` ergeben sich kcal und Makros aus der Summe der Zutaten (kcal ganzzahlig, Makros eine Nachkommastelle, wie in
+  `js/04-berechnungen.js`), fehlende kcal werden aus den Makros gerechnet (4/4/9),
+- ohne Datum gilt heute (Europe/Berlin), erlaubt sind Tage von einem Jahr zurück bis 14 Tage voraus,
+- läuft mit den Rechten des Aufrufers: nur der Eigentümer kann sie ausführen, `anon` und fremde Konten werden abgewiesen,
+- gibt Eintrag, Tagessumme und Tagesziel zurück. Offene Seiten zeigen den neuen Eintrag sofort (Realtime).
+
+Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"Kartoffeln, 300 g","kcal":230,"protein":6,"carbs":50,"fat":0.3}, …]}`.
+
 ## 5. Daten (Sammlungen)
 
 | Sammlung    | Dokument-IDs         | Inhalt (Felder)                                                                                                   |

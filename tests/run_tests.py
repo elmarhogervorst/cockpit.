@@ -30,7 +30,11 @@ def synthetic():
         ex("bank", "Bankdrücken", "Brust"), ex("rudern", "Rudern", "Rücken"), ex("kniebeuge", "Kniebeuge", "Beine"),
         {"collection": "presets", "id": "push", "data": {"name": "Push", "order": 1, "exercises": [bench]}},
         {"collection": "days", "id": iso(today), "data": {"date": iso(today), "plan": plan(today, "training", "Push", [bench]), "targets": {"kcal": 2500, "protein": 150, "carbs": 300, "fat": 80}, "waterMl": 500,
-            "meals": [{"id": "m1", "name": "Haferflocken", "at": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z"), "kcal": 400, "protein": 15, "carbs": 60, "fat": 8}]}},
+            "meals": [{"id": "m1", "name": "Haferflocken", "at": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z"), "kcal": 400, "protein": 15, "carbs": 60, "fat": 8},
+            # so legt die Datenbankfunktion log_meal einen Eintrag mit Zutaten an (siehe supabase/migrations/0003)
+            {"id": "m9f78c1bdeb", "name": "Kartoffeln mit Hähnchen", "at": "2026-10-23T21:14:43.614Z", "kcal": 394, "protein": 39, "carbs": 50, "fat": 3.8,
+             "ingredients": [{"id": "i45c2a0487", "name": "Kartoffeln, 300 g", "kcal": 230, "protein": 6, "carbs": 50, "fat": 0.3},
+                             {"id": "ia9b0464f7", "name": "Hähnchen, 150 g", "kcal": 164, "protein": 33, "carbs": 0, "fat": 3.5}]}]}},
         {"collection": "days", "id": iso(today - dt.timedelta(days=1)), "data": {"date": iso(today - dt.timedelta(days=1)), "plan": plan(today - dt.timedelta(days=1), "rest", "Ruhetag", []), "waterMl": 1500}},
         {"collection": "days", "id": iso(today + dt.timedelta(days=1)), "data": {"date": iso(today + dt.timedelta(days=1)), "plan": None}},
         {"collection": "wissen", "id": "vorlieben", "data": {"title": "Vorlieben", "intro": "Test", "order": 1, "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
@@ -105,6 +109,16 @@ def run(rows, today, label, full):
                 if loc.count():
                     loc.click(); page.wait_for_timeout(200)
                     check(f"Training/{sub} zeichnet ohne Fehler", len(page.inner_text("#view")) > 40)
+
+        # 2b. Ein von log_meal angelegter Eintrag mit Zutaten wird in der Ernährung richtig gezeigt
+        if not full:
+            page.click('#nav button[data-tab="nutrition"]'); page.wait_for_timeout(300)
+            check("Ernährung zeigt den Eintrag mit Zutaten", "Kartoffeln mit Hähnchen" in page.inner_text("#view"))
+            check("Ernährung rechnet die Tagessumme aus beiden Einträgen (794 kcal)", "794" in page.inner_text("#view"), page.inner_text("#view")[:300].replace("\n", " "))
+            tg = page.locator('[data-act="meal-toggle"]').first
+            if tg.count():
+                tg.click(); page.wait_for_timeout(300)
+            check("Zutaten lassen sich aufklappen", "Kartoffeln, 300 g" in page.inner_text("#view") and "Hähnchen, 150 g" in page.inner_text("#view"))
 
         # 3. Schreiben: Wasser (days/<heute>)
         page.click('#nav button[data-tab="overview"]'); page.wait_for_timeout(200)
