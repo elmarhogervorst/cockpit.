@@ -82,6 +82,7 @@ def run(rows, today, label, full):
 
         # 1. Ohne Anmeldung kein Inhalt, nur die Anmeldung
         check("Anmeldeseite sichtbar", page.is_visible("#gate"))
+        check("kein „Passwort vergessen“ und keine Registrierung auf der Anmeldeseite", not any(w in page.inner_text("#gate").lower() for w in ("vergessen", "registr", "konto erstellen")))
         check("ohne Anmeldung keine Daten im Dokument", "Haferflocken" not in page.inner_text("body") and "Bankdrücken" not in page.inner_text("body"))
         page.fill("#gate-email", MAIL); page.fill("#gate-pw", "falsch"); page.click("#gate-submit")
         page.wait_for_function("document.getElementById('gate-msg').textContent.length>0")

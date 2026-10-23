@@ -102,9 +102,7 @@ var supabase = (function(){
       }
       return { data: null, error: { message: 'Invalid login credentials', status: 400 } };
     },
-    async signOut(){ S.loggedIn = false; try { localStorage.removeItem('mock.loggedIn'); } catch (e) {} fireAuth('SIGNED_OUT'); return { error: null }; },
-    async updateUser(p){ S.calls.push({ op: 'updateUser' }); S.loggedIn = true; try { localStorage.setItem('mock.loggedIn', '1'); } catch (e) {} fireAuth('SIGNED_IN'); return { data: {}, error: null }; },
-    async resetPasswordForEmail(mail, o){ S.calls.push({ op: 'reset', email: mail, redirectTo: o && o.redirectTo }); return { data: {}, error: null }; }
+    async signOut(){ S.loggedIn = false; try { localStorage.removeItem('mock.loggedIn'); } catch (e) {} fireAuth('SIGNED_OUT'); return { error: null }; }
   };
 
   return { createClient: () => ({ auth, from: () => builder(), rpc, channel }) };

@@ -53,7 +53,7 @@
 
 <!-- Anmeldung: liegt über allem, bis eine gültige Sitzung da ist. Eine Registrierung gibt es nicht. -->
 <div class="gate" id="gate">
-  <form class="gate-card" id="gate-form" data-mode="login" autocomplete="on" novalidate hidden>
+  <form class="gate-card" id="gate-form" autocomplete="on" novalidate hidden>
     <div class="logo" aria-hidden="true">cockpit<i></i></div>
     <h1 class="h2" id="gate-t">Anmelden</h1>
     <p class="gate-msg" id="gate-msg" role="alert" aria-live="assertive"></p>
@@ -65,12 +65,7 @@
       <label class="lbl" for="gate-pw">Passwort</label>
       <input class="field" id="gate-pw" name="password" type="password" autocomplete="current-password">
     </div>
-    <div class="fgroup" id="gate-pw2-wrap" hidden>
-      <label class="lbl" for="gate-pw2">Neues Passwort (mindestens 8 Zeichen)</label>
-      <input class="field" id="gate-pw2" name="new-password" type="password" autocomplete="new-password" minlength="8">
-    </div>
     <button type="submit" class="btn pri block" id="gate-submit">Anmelden</button>
-    <button type="button" class="gate-link" id="gate-reset">Passwort vergessen?</button>
   </form>
 </div>
 

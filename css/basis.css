@@ -12,5 +12,3 @@ img{max-width:100%}
 .gate-card .h2{margin-bottom:14px}
 .gate-msg{min-height:1.45em;margin:0 0 14px;font-size:14px;color:var(--ink-2)}
 .gate-msg[data-bad="1"]{color:var(--accent)}
-.gate-link{display:block;margin:16px auto 0;border:0;background:transparent;color:var(--ink-2);text-decoration:underline;padding:6px;font-size:14px}
-.gate-link:disabled{opacity:.5}

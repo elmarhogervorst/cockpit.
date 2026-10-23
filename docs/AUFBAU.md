@@ -42,8 +42,8 @@ ein zusätzliches Symbol (`01`).
 - `window.CockpitAuth.ready()` liefert erst eine Datenbank-Schnittstelle, wenn eine gültige Sitzung da ist. Bis dahin sieht man nur
   die Anmeldeseite (`#gate`), und es werden **keine** Daten angefragt.
 - Anmelden: `signInWithPassword`. Falsche Eingaben zeigen eine Meldung, die Seite bleibt gesperrt.
-- „Passwort vergessen“: schickt eine E-Mail an die eingegebene Adresse. Der Link führt auf die Seite zurück (Wiederherstellungsmodus),
-  dort wird ein neues Passwort gesetzt (`updateUser`).
+- Es gibt bewusst kein „Passwort vergessen“ und keine E-Mails. Ein neues Passwort setzt der Eigentümer in Supabase (siehe README).
+  `detectSessionInUrl` ist aus: Anmeldedaten in der Adresszeile (Links) werden ignoriert.
 - Die Sitzung liegt im `localStorage` unter dem Schlüssel `cockpit.auth` und wird automatisch erneuert.
 - Abmelden (Kopfzeile) beendet die Sitzung und lädt die Seite neu; danach ist wieder nur die Anmeldeseite sichtbar.
 

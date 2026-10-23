@@ -15,7 +15,7 @@ css/
   basis.css           Handy-Ränder, Anmeldeseite
 js/
   config.js           Adresse und öffentlicher Schlüssel des Supabase-Projekts
-  auth.js             Anmeldung mit E-Mail + Passwort (keine Registrierung), Passwort vergessen
+  auth.js             Anmeldung mit E-Mail + Passwort (keine Registrierung, kein „Passwort vergessen“)
   db-supabase.js      Dokumentspeicher: bildet die kleine Datenbank-Schnittstelle auf Supabase ab
   01-grundlagen.js    Konstanten, Hilfsfunktionen, Zustand (S, UI)
   02-datenbank.js     Laden aller Sammlungen, Live-Abo, Fehlertexte
@@ -54,12 +54,25 @@ Reihenfolge der Nummern geladen. Details dazu in [docs/AUFBAU.md](docs/AUFBAU.md
    Vorher genau **einen** Nutzer unter *Authentication → Users* anlegen (E-Mail + Passwort); `0002` macht ihn zum Eigentümer
    und sperrt jede weitere Registrierung.
 2. *Authentication → Sign In / Providers → Email*: **„Allow new users to sign up“ ausschalten**.
-3. *Authentication → URL Configuration*: **Site URL** auf die Pages-Adresse setzen und dieselbe Adresse unter *Redirect URLs*
-   eintragen (sonst führt der Link in der „Passwort vergessen“-Mail nicht zurück).
-4. In `js/config.js` die Projekt-Adresse und den **publishable** Schlüssel eintragen.
-5. GitHub: *Settings → Pages → Deploy from a branch → `main` / `(root)`*.
+3. In `js/config.js` die Projekt-Adresse und den **publishable** Schlüssel eintragen.
+4. GitHub: *Settings → Pages → Deploy from a branch → `main` / `(root)`*.
+
+Es werden keine E-Mails verschickt (kein „Passwort vergessen“, keine Einladung). Die Einstellungen *Site URL* und *Redirect URLs*
+in Supabase spielen deshalb keine Rolle.
 
 Nie ins Repo gehören: `secret`-/`service_role`-Schlüssel, Passwörter, Backups.
+
+## Passwort ändern
+
+Da es kein „Passwort vergessen“ gibt, wird das Passwort in Supabase gesetzt: *SQL Editor*, dann (E-Mail und Passwort einsetzen):
+
+```sql
+update auth.users
+   set encrypted_password = extensions.crypt('NEUES-LANGES-PASSWORT', extensions.gen_salt('bf'))
+ where email = 'deine@mail.de';
+```
+
+Danach in der Seite abmelden und neu anmelden. Das Passwort steht dabei im Verlauf des SQL-Editors; nicht in Dateien oder ins Repo schreiben.
 
 ## Weiteren Nutzer anlegen
 
