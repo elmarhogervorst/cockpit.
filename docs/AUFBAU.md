@@ -119,9 +119,16 @@ Code-Änderung.
 - `private.is_owner()` prüft, ob `auth.uid()` in `private.app_owner` steht. Das Schema `private` ist für den Browser nicht
   erreichbar; die Tabelle `app_owner` hat RLS ohne Regel, ist also nur über die `security definer`-Funktion lesbar.
 - Rolle `anon` (nicht angemeldet) hat auf `docs` keinerlei Rechte (auch nicht lesen).
+- Die Rolle `authenticated` hat auf `docs` nur lesen, einfügen, ändern, löschen (`0004` nimmt TRUNCATE, TRIGGER, REFERENCES weg;
+  TRUNCATE wäre das eine Recht, das Row Level Security umgeht).
 - `merge_doc` läuft als `security invoker`, unterliegt also denselben Regeln; `anon` darf sie nicht ausführen.
 - Nach der Einrichtung geprüft: Eigentümer sieht alle Dokumente; ein fremdes angemeldetes Konto sieht 0 Zeilen und kann weder
   einfügen noch ändern; `anon` wird abgewiesen; eine Registrierung schlägt fehl.
+
+**Bekannte Restgrenze (Realtime):** Supabase wendet Row Level Security bei Live-Ereignissen nur auf Einfügen und Ändern an, nicht
+auf Löschen. Wer den (öffentlichen) publishable Schlüssel kennt, könnte sich theoretisch auf den Live-Kanal schalten und beim
+Löschen eines Dokuments dessen Schlüssel (Sammlung und Kennung, z. B. ein Datum) sehen, aber nie Inhalte. Das ist im Alltag
+bedeutungslos und wird bewusst hingenommen.
 
 **Keine Registrierung:**
 
