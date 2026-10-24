@@ -53,7 +53,7 @@ function wzItem(it){
   if(it.kind==='table')return '<div class="wz-item wz-wide"><div class="wz-k">'+esc(it.label)+'</div>'+wzTable(it)+hint+'</div>';
   if(it.kind==='list')return '<div class="wz-item wz-wide"><div class="wz-k">'+esc(it.label)+'</div>'+wzList(it)+hint+'</div>';
   if(it.kind==='text')return '<div class="wz-item wz-wide"><div class="wz-k">'+esc(it.label)+'</div><p class="wz-p">'+esc(it.value||'')+'</p>'+hint+'</div>';
-  const v=it.kind==='bool'?(it.value?'Ja':'Nein'):inputNum(it.value);
+  const v=it.kind==='bool'?(it.value?'Ja':'Nein'):typeof it.value==='string'?it.value:inputNum(it.value); /* Text wie "60 bis 90" bleibt, wie er ist */
   return '<div class="wz-item"><div class="wz-line"><span class="wz-k">'+esc(it.label)+'</span><span class="wz-v"><b>'+esc(v)+'</b>'+(it.unit?' <span class="wz-unit">'+esc(it.unit)+'</span>':'')+'</span></div>'+hint+'</div>';
 }
 /* "Training: Wochenaufbau" -> Hauptgruppe "Training", Untergruppe "Wochenaufbau" */
