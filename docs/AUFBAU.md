@@ -106,7 +106,8 @@ historisch „Körper“).
 
 ### Reiter „Wissen“
 
-Das feste Regelwerk, nach dem Claude plant und auswertet: Vorlieben, Regeln, dazu eine Beschreibung des
+Das feste Regelwerk, nach dem Claude plant und auswertet: Vorlieben & Alltag (persönliche Wünsche und Alltag, zum Beispiel
+Einheiten pro Woche und Alltagsfaktor), Regeln (auch die Zielwerte für Protein und Fett je kg Körpergewicht), dazu eine Beschreibung des
 Datenmodells. Jedes Dokument hat `title`, `intro`, `order`, `items[]` (Felder mit `kind`: `number`, `text`, `bool`, `list`,
 `table`) und optional `layout`. Bei `list` ist `value` eine Liste von Sätzen. Das Feld `group` darf `Hauptgruppe: Untergruppe`
 heißen; die Seite macht daraus eine Überschrift mit einem Kasten je Untergruppe, Tabellen erscheinen als Karten je Zeile.

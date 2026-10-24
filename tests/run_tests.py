@@ -37,7 +37,7 @@ def synthetic():
                              {"id": "ia9b0464f7", "name": "Hähnchen, 150 g", "kcal": 164, "protein": 33, "carbs": 0, "fat": 3.5}]}]}},
         {"collection": "days", "id": iso(today - dt.timedelta(days=1)), "data": {"date": iso(today - dt.timedelta(days=1)), "plan": plan(today - dt.timedelta(days=1), "rest", "Ruhetag", []), "waterMl": 1500, "weight": 82.5}},
         {"collection": "days", "id": iso(today + dt.timedelta(days=1)), "data": {"date": iso(today + dt.timedelta(days=1)), "plan": None}},
-        {"collection": "wissen", "id": "vorlieben", "data": {"title": "Vorlieben", "intro": "Test", "order": 1, "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
+        {"collection": "wissen", "id": "vorlieben", "data": {"title": "Vorlieben & Alltag", "intro": "Test", "order": 1, "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
             {"group": "Ernährung", "key": "ernaehrung.alltagsfaktor", "kind": "number", "label": "Alltagsfaktor", "step": 0.025, "value": 1.375},
             {"group": "Training", "key": "training.sport_fest", "kind": "table", "label": "Sport", "editRows": True, "value": [{"name": "Tennis", "tag": "do", "von": "16:00", "bis": "17:00", "sicher": "fest", "hinweis": ""}],
              "columns": [{"k": "name", "kind": "text", "label": "Sport"}, {"k": "tag", "kind": "select", "label": "Tag", "options": [["do", "Donnerstag"]]}, {"k": "von", "kind": "time", "label": "von"}, {"k": "bis", "kind": "time", "label": "bis"}, {"k": "sicher", "kind": "select", "label": "Sicherheit", "options": [["fest", "fest"]]}, {"k": "hinweis", "kind": "text", "label": "Hinweis"}]}]}},
@@ -160,6 +160,7 @@ def run(rows, today, label, full):
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)
             check("Vorlieben und Regeln sind ein Block je Dokument und zu Beginn zugeklappt",
                   page.locator("#view details.wz").count() == 3 and page.locator("#view details.wz[open]").count() == 0)
+            check("Titel mit &-Zeichen wird richtig gezeigt (Vorlieben & Alltag)", "Vorlieben & Alltag" in page.locator('#view details.wz[data-wz="vorlieben"] > summary').inner_text(), page.locator('#view details.wz[data-wz="vorlieben"] > summary').inner_text())
             check("Zugeklappt steht der Inhalt nicht auf der Seite", "Alltagsfaktor" not in page.inner_text("#view") and "Bei 3 Einheiten" not in page.inner_text("#view"))
             page.locator('#view details.wz[data-wz="regeln"] > summary').click(); page.wait_for_timeout(200)
             check("Ein Klick klappt den Block auf", page.locator('#view details.wz[data-wz="regeln"][open]').count() == 1 and "Bei 3 Einheiten Ganzkörper." in page.inner_text("#view"))
