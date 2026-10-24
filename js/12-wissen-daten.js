@@ -1,18 +1,24 @@
 'use strict';
-/* Reiter Wissen: Deine Daten und Körpergewicht */
-/* ---------- Körper ---------- */
-function profDraft(){
-  if(!UI.profDraft){
-    UI.profDraft=S.profile?clone(S.profile):{sex:'male',age:null,height:null,goalWeight:null};
-    UI.profDirty=false;
-  }
-  return UI.profDraft;
+/* Reiter Wissen: Deine Daten und Körpergewicht (nur Anzeige) */
+/* ---------- Körper ----------
+   Das Profil (profile/main) wird hier nur gezeigt. Ändern kann es allein Claude auf Wunsch im Chat; das aktuelle Gewicht trägt die
+   Seite selbst aus dem Daily Check-in ein (09-training-heute.js). */
+const GOAL_NAME={build:'Muskelaufbau',cut:'Definition (Abnehmen)',hold:'Gewicht halten'};
+const SEX_NAME={male:'Männlich',female:'Weiblich'};
+function profRow(label,val,unit){
+  const has=val!=null&&val!=='';
+  return '<div class="wz-item"><div class="wz-line"><span class="wz-k">'+esc(label)+'</span><span class="wz-v">'+(has?'<b>'+esc(val)+'</b>'+(unit?' <span class="wz-unit">'+esc(unit)+'</span>':''):'–')+'</span></div></div>';
 }
-function numField(k,label,unit,val,ph){
-  return '<div class="fgroup"><label class="lbl" for="pf-'+k+'">'+label+'</label><div class="uw"><input class="field" id="pf-'+k+'" inputmode="decimal" data-live="pf" data-bind="pf" data-k="'+k+'" value="'+esc(inputNum(val))+'" placeholder="'+(ph||'')+'"><span class="un">'+unit+'</span></div></div>';
-}
-function pChips(k,list,cur){
-  return '<div class="choices" role="group">'+list.map(([v,l])=>'<button type="button" class="chip" data-act="pf-set" data-k="'+k+'" data-v="'+v+'" aria-pressed="'+(String(cur)===String(v))+'">'+l+'</button>').join('')+'</div>';
+function profileCard(){
+  const p=S.profile||{};
+  return '<section class="card"><div class="kicker">Profil</div><h2 class="h2" style="margin:4px 0 14px">Deine Daten</h2><div class="wz-items">'
+    +profRow('Ziel',GOAL_NAME[p.goal]||p.goal)
+    +profRow('Geschlecht',SEX_NAME[p.sex]||p.sex)
+    +profRow('Alter',p.age,'Jahre')
+    +profRow('Größe',p.height>0?inputNum(p.height):null,'cm')
+    +profRow('Aktuelles Gewicht',p.weight>0?inputNum(p.weight):null,'kg')
+    +profRow('Zielgewicht',p.goalWeight>0?inputNum(p.goalWeight):null,'kg')
+    +'</div></section>';
 }
 function weightSeries(){
   return Object.values(S.days).filter(d=>d.weight>0).sort((a,b)=>a.date<b.date?-1:1).map(d=>({date:d.date,w:d.weight}));
@@ -42,7 +48,7 @@ function chartHtml(pts,goal){
     +'<circle cx="'+X(last.date).toFixed(1)+'" cy="'+Y(last.w).toFixed(1)+'" r="6" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5"/>'+xt+hits+'</svg><div class="tip" hidden></div></div>';
 }
 function weightCard(){
-  const pts=weightSeries(),goal=(S.profile&&S.profile.goalWeight)||(UI.profDraft&&UI.profDraft.goalWeight)||0;
+  const pts=weightSeries(),goal=(S.profile&&S.profile.goalWeight)||0;
   let inner;
   if(!pts.length){
     inner='<div class="empty"><b>Noch keine Gewichtsdaten</b>Trage dein nüchternes Gewicht im Daily Check-in auf der Übersicht ein. Ab zwei Messungen erscheint hier der Verlauf.</div>';
@@ -60,15 +66,9 @@ function weightCard(){
   return '<section class="card chartcard"><div class="kicker">Verlauf</div><h2 class="h2" style="margin:4px 0 10px">Körpergewicht</h2>'+inner+'</section>';
 }
 VIEWS.body=function(){
-  const p=profDraft(),FG='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px';
-  const left='<section class="card"><div class="kicker">Profil</div><h2 class="h2" style="margin:4px 0 14px">Deine Daten</h2>'
-    +'<div style="'+FG+'"><div class="fgroup"><span class="lbl">Geschlecht</span>'+pChips('sex',[['male','Männlich'],['female','Weiblich']],p.sex)+'</div>'
-      +numField('age','Alter','Jahre',p.age,'28')+numField('height','Größe','cm',p.height,'182')+numField('goalWeight','Zielgewicht','kg',p.goalWeight,'85')+'</div>'
-    +'<div class="fgroup"><label class="lbl" for="pf-notes">Trainingsvorlieben und Hinweise</label><textarea class="field" id="pf-notes" rows="5" maxlength="1500" data-live="pft" data-k="trainingNotes" placeholder="Zum Beispiel: Ziel Muskelaufbau. Im Alltag viel Sitzen, dazu 2 × Padel pro Woche. Ich möchte 4 Tage pro Woche trainieren, höchstens 60 Minuten, am liebsten Push/Pull/Legs. Sonntag ist immer frei. Schulter macht Probleme.">'+esc(p.trainingNotes||'')+'</textarea></div>'
-    +'<div style="border-top:1px solid var(--line);padding-top:18px"><button type="button" class="btn pri" data-act="pf-save">Daten speichern</button></div></section>';
   return '<div class="pagehead"><div class="kicker">'+esc(longDate(TODAY()))+'</div><h1 class="title">Wissen</h1></div>'
-    +'<p class="wz-intro">Oben stehen deine Daten und dein Gewicht, die du hier selbst pflegst. Darunter steht das feste Regelwerk, nach dem Claude plant und auswertet: deine Vorlieben, die Regeln für Training und Ernährung und die Auswertung. Das kannst du hier nachlesen. Geändert wird es nur von Claude, wenn du es im Chat willst.</p>'
-    +'<div class="grid2 even">'+left+weightCard()+'</div>'
+    +'<p class="wz-intro">Oben stehen deine Eckdaten und dein Gewichtsverlauf. Darunter steht das feste Regelwerk, nach dem Claude plant und auswertet: deine Vorlieben, die Regeln für Training und Ernährung und die Auswertung. Das kannst du hier nachlesen. Geändert wird es nur von Claude, wenn du es im Chat willst. Dein Gewicht trägst du im Daily Check-in auf der Übersicht ein.</p>'
+    +'<div class="grid2 even">'+profileCard()+weightCard()+'</div>'
     +wissenHtml();
 };
 AFTER.body=function(){
@@ -85,27 +85,4 @@ AFTER.body=function(){
     tip.hidden=false;
   });
   w.addEventListener('pointerleave',()=>{tip.hidden=true;});
-};
-BIND.pf=(t,e,kind)=>{
-  const k=t.dataset.k,p=profDraft();
-  const v=toNum(t.value);
-  p[k]=v==null?null:v;
-  UI.profDirty=true;
-  if(kind==='change'&&v!=null)t.value=inputNum(v);
-};
-BIND.pft=t=>{profDraft()[t.dataset.k]=t.value.slice(0,1500);UI.profDirty=true;};
-ACT['pf-set']=t=>{
-  const k=t.dataset.k,raw=t.dataset.v;
-  profDraft()[k]=raw;
-  UI.profDirty=true;render();
-};
-ACT['pf-save']=()=>{
-  const p=profDraft();
-  if(!(p.age>=10&&p.age<=100)||!(p.height>=100&&p.height<=250)){toast('Prüfe Alter und Größe');return;}
-  const doc=Object.assign({},S.profile||{},p,{updatedAt:new Date().toISOString()});
-  if(!(doc.weight>0))delete doc.weight;
-  S.profile=doc;
-  setDoc('profile/main',doc);
-  UI.profDirty=false;
-  toast('Daten gespeichert');
 };

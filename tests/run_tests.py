@@ -148,10 +148,10 @@ def run(rows, today, label, full):
             txt = page.inner_text("#view")
             check("Wissen zeigt den Vorlieben-Wert", "Alltagsfaktor" in txt and "1,375" in txt, txt[:200].replace("\n", " "))
             check("Wissen zeigt den Regeltext", "Bei 3 Einheiten Ganzkörper." in txt)
-            check("Wissen hat keine Eingabefelder und keinen Speichern-Knopf", page.locator("#view .wz input, #view .wz textarea, #view .wz select, #view [data-act^='wz-']").count() == 0)
+            check("Wissen hat keine Eingabefelder und keinen Speichern-Knopf", page.locator("#view input, #view textarea, #view select, #view [data-act^='wz-'], #view [data-act^='pf-']").count() == 0)
             check("Datenmodell wird nicht angezeigt", "Datenmodell" not in txt)
             check("Startgewicht gibt es nicht mehr", "Startgewicht" not in txt)
-            check("Deine Daten bleiben editierbar", page.locator("#pf-age").count() == 1)
+            check("Deine Daten werden nur angezeigt (Alter 30, Ziel Muskelaufbau)", "Alter" in txt and "30" in txt and "Muskelaufbau" in txt and "Trainingsvorlieben" not in txt, txt[:300].replace("\n", " "))
 
         # 4b. Claude-Anweisung über den Knopf in der Kopfzeile
         if not full:

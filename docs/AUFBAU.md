@@ -113,8 +113,9 @@ schreibt nie in `wissen`. Geändert wird es allein von Claude (per SQL), auf Wun
 (`layout: model`) ist für Claude gedacht und wird auf der Seite nicht angezeigt. Die Sperre gilt nur in der Oberfläche, nicht
 in der Datenbank (der angemeldete Eigentümer dürfte technisch schreiben).
 
-Der Reiter zeigt außerdem „Deine Daten“ (Profil) und den Gewichtsverlauf. Das Profil ist die eine Stelle auf dieser Seite, die du
-selbst änderst.
+Der Reiter zeigt außerdem „Deine Daten“ (Ziel, Geschlecht, Alter, Größe, aktuelles und Zielgewicht aus `profile/main`) und den
+Gewichtsverlauf, ebenfalls nur lesend. Das Profil ändert allein Claude auf Wunsch; das aktuelle Gewicht (`profile.weight`) trägt die
+Seite selbst ein, wenn du im Daily Check-in dein heutiges Gewicht speicherst.
 
 ### Claude-Anweisung
 

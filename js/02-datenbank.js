@@ -52,7 +52,7 @@ function saveDayLater(date,field,ms){
 
 function subscribe(){
   const on=(ref,key,apply)=>ref.onSnapshot(s=>{apply(s);LOADED[key]=true;requestRender();},e=>{console.error(e);UI.dbErr=e;requestRender();});
-  on(DB.doc('profile/main'),'profile',s=>{S.profile=s.exists?clone(s.data()):null;if(!UI.profDirty)UI.profDraft=null;});
+  on(DB.doc('profile/main'),'profile',s=>{S.profile=s.exists?clone(s.data()):null;});
   on(DB.doc('targets/main'),'targets',s=>{S.targets=s.exists?clone(s.data()):null;});
   on(DB.collection('exercises'),'exercises',s=>{
     S.exercises=s.docs.map(d=>Object.assign({id:d.id},clone(d.data()))).sort((a,b)=>String(a.name).localeCompare(String(b.name),'de'));
