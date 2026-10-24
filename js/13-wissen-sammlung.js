@@ -18,7 +18,7 @@ function wzWhen(s){
 function wzCellText(c,v){
   if(c.kind==='select'){const o=(c.options||[]).find(x=>String(x[0])===String(v));return o?o[1]:(v==null?'':String(v));}
   if(c.kind==='text'||c.kind==='time'||c.kind==='date')return v==null?'':String(v);
-  return inputNum(v);
+  return typeof v==='string'?v:inputNum(v); /* Text (zum Beispiel ein Datum 24.10.2026) bleibt unverändert */
 }
 /* Tabellen werden je Zeile als kleine Karte gezeigt: erste Spalte als Titel, die übrigen als Felder mit Beschriftung.
    Das bleibt auch auf dem Handy lesbar, ohne seitlich zu scrollen. Bei nur zwei Spalten steht der Wert rechts neben dem Titel. */
