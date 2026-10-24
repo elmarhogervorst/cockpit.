@@ -44,6 +44,9 @@ def synthetic():
         {"collection": "wissen", "id": "regeln", "data": {"title": "Regeln", "intro": "Test", "order": 2, "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
             {"group": "Training: Wochenaufbau", "key": "training.aufteilung", "kind": "text", "label": "Aufteilung der Einheiten", "value": "Bei 3 Einheiten Ganzkörper."},
             {"group": "Training: Volumen und Intensität", "key": "training.muskelversagen", "kind": "list", "label": "Nähe zum Muskelversagen", "value": ["Meist 1 bis 3 Wiederholungen Reserve.", "Letzter Satz darf näher ans Versagen."]}]}},
+        {"collection": "wissen", "id": "spaeter", "data": {"title": "Später prüfen", "intro": "Test", "order": 3, "count": "rows", "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
+            {"key": "spaeter.zu_pruefen", "group": "", "kind": "table", "columns": [{"k": "thema", "kind": "text", "label": "Thema"}, {"k": "seit", "kind": "date", "label": "Eingetragen am"}],
+             "value": [{"thema": "Erster Punkt", "seit": "24.10.2026"}, {"thema": "Zweiter Punkt", "seit": "25.10.2026"}]}]}},
         {"collection": "ki", "id": "systemprompt", "data": {"title": "Claude-Anweisung", "updatedAt": "2026-01-01T00:00:00.000Z", "text": "Testanweisung: Lies zuerst wissen/datenmodell."}},
         {"collection": "wissen", "id": "datenmodell", "data": {"title": "Datenmodell", "intro": "Test", "order": 4, "layout": "model", "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
             {"group": "Profil", "key": "profile.age", "kind": "model", "label": "Alter", "typ": "zahl", "pflicht": True}]}},
@@ -156,7 +159,7 @@ def run(rows, today, label, full):
         if not full:
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)
             check("Vorlieben und Regeln sind ein Block je Dokument und zu Beginn zugeklappt",
-                  page.locator("#view details.wz").count() == 2 and page.locator("#view details.wz[open]").count() == 0)
+                  page.locator("#view details.wz").count() == 3 and page.locator("#view details.wz[open]").count() == 0)
             check("Zugeklappt steht der Inhalt nicht auf der Seite", "Alltagsfaktor" not in page.inner_text("#view") and "Bei 3 Einheiten" not in page.inner_text("#view"))
             page.locator('#view details.wz[data-wz="regeln"] > summary').click(); page.wait_for_timeout(200)
             check("Ein Klick klappt den Block auf", page.locator('#view details.wz[data-wz="regeln"][open]').count() == 1 and "Bei 3 Einheiten Ganzkörper." in page.inner_text("#view"))
@@ -173,6 +176,9 @@ def run(rows, today, label, full):
                   page.locator('#view details.wz[data-wz="regeln"] .wz-mh').count() == 1 and page.locator('#view details.wz[data-wz="regeln"] .wz-subgrp').count() == 2
                   and "wochenaufbau" in txt.lower() and "volumen und intensität" in txt.lower() and "training: wochenaufbau" not in txt.lower(),
                   page.locator('#view details.wz[data-wz="regeln"]').inner_text()[:200].replace("\n", " "))
+            sp = page.locator('#view details.wz[data-wz="spaeter"]')
+            check("Später prüfen zählt die Zeilen (2 Einträge), nicht die Felder", "2 Einträge" in sp.locator("summary").inner_text(), sp.locator("summary").inner_text())
+            check("Liste ohne Gruppe und Beschriftung hat keine Überschrift, Datum bleibt mit Punkten", sp.locator(".wz-mh, .wz-k").count() == 0 and "24.10.2026" in sp.inner_text(), sp.inner_text()[:200].replace("\n", " "))
             check("Listen werden als Aufzählung gezeigt", page.locator("#view .wz-list li").count() == 2 and "Meist 1 bis 3 Wiederholungen Reserve." in txt)
             check("Aktuelles Gewicht kommt aus dem Daily Check-in (82,5 kg)", "Aktuelles Gewicht" in txt and "82,5" in txt and "80" not in page.locator("#view .wz-item", has_text="Aktuelles Gewicht").first.inner_text(), txt[:300].replace("\n", " "))
             check("Wissen hat keine Eingabefelder und keinen Speichern-Knopf", page.locator("#view input, #view textarea, #view select, #view [data-act^='wz-'], #view [data-act^='pf-']").count() == 0)

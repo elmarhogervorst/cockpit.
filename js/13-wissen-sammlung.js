@@ -4,7 +4,7 @@
    Zentrale Sammlung wissen/<id>: Vorlieben, Regeln, Datenmodell. Jedes Dokument beschreibt sich selbst:
    {title,intro,order,layout?,updatedAt,items:[{key,group,label,kind,value,unit?,hint?,columns?}]}.
    kind: number, text, bool, list (value = Liste von Sätzen) oder table (Spalten in columns mit kind text, number, select, time oder date, Zeilen in value).
-   group darf "Hauptgruppe: Untergruppe" heißen; die Seite gliedert danach in eine Überschrift und darunter Felder je Untergruppe.
+   group darf "Hauptgruppe: Untergruppe" heißen oder leer sein (dann ohne Überschrift), label darf fehlen; count:'rows' zählt die Tabellenzeilen statt der Felder; die Seite gliedert danach in eine Überschrift und darunter Felder je Untergruppe.
    Die Seite enthält keine Werte, sie zeichnet nur, was in der Sammlung steht, und ändert nichts daran: Nur Claude schreibt
    in diese Dokumente (siehe ki/systemprompt). Jedes Dokument ist ein Block, der sich ein- und ausklappen lässt (zu Beginn zu).
    Das Datenmodell (layout 'model') ist für Claude und wird hier nicht gezeigt. */
@@ -50,9 +50,10 @@ function wzList(it){
 }
 function wzItem(it){
   const hint=it.hint?'<p class="wz-hint">'+esc(it.hint)+'</p>':'';
-  if(it.kind==='table')return '<div class="wz-item wz-wide"><div class="wz-k">'+esc(it.label)+'</div>'+wzTable(it)+hint+'</div>';
-  if(it.kind==='list')return '<div class="wz-item wz-wide"><div class="wz-k">'+esc(it.label)+'</div>'+wzList(it)+hint+'</div>';
-  if(it.kind==='text')return '<div class="wz-item wz-wide"><div class="wz-k">'+esc(it.label)+'</div><p class="wz-p">'+esc(it.value||'')+'</p>'+hint+'</div>';
+  const lab=it.label?'<div class="wz-k">'+esc(it.label)+'</div>':'';
+  if(it.kind==='table')return '<div class="wz-item wz-wide">'+lab+wzTable(it)+hint+'</div>';
+  if(it.kind==='list')return '<div class="wz-item wz-wide">'+lab+wzList(it)+hint+'</div>';
+  if(it.kind==='text')return '<div class="wz-item wz-wide">'+lab+'<p class="wz-p">'+esc(it.value||'')+'</p>'+hint+'</div>';
   const v=it.kind==='bool'?(it.value?'Ja':'Nein'):typeof it.value==='string'?it.value:inputNum(it.value); /* Text wie "60 bis 90" bleibt, wie er ist */
   return '<div class="wz-item"><div class="wz-line"><span class="wz-k">'+esc(it.label)+'</span><span class="wz-v"><b>'+esc(v)+'</b>'+(it.unit?' <span class="wz-unit">'+esc(it.unit)+'</span>':'')+'</span></div>'+hint+'</div>';
 }
@@ -64,7 +65,7 @@ function wzSplit(g){
 function wzGroups(items){
   const mains=[];
   items.forEach(it=>{
-    const p=wzSplit(it.group||'Allgemein');
+    const p=wzSplit(it.group==null?'Allgemein':it.group); /* group '' = ohne Überschrift */
     let m=mains.find(x=>x.main===p.main);if(!m){m={main:p.main,subs:[]};mains.push(m);}
     let s=m.subs.find(x=>x.sub===p.sub);if(!s){s={sub:p.sub,items:[]};m.subs.push(s);}
     s.items.push(it);
@@ -72,13 +73,19 @@ function wzGroups(items){
   return mains;
 }
 function wzBody(items){
-  return wzGroups(items).map(m=>'<div class="wz-main"><h3 class="wz-mh">'+esc(m.main)+'</h3>'
+  return wzGroups(items).map(m=>'<div class="wz-main">'+(m.main?'<h3 class="wz-mh">'+esc(m.main)+'</h3>':'')
     +m.subs.map(s=>'<div class="wz-subgrp">'+(s.sub?'<div class="kicker">'+esc(s.sub)+'</div>':'')
       +'<div class="wz-items">'+s.items.map(wzItem).join('')+'</div></div>').join('')
     +'</div>').join('');
 }
+/* Zahl der Einträge: bei count:'rows' die Zeilen der Tabellen (Listen wie „Später prüfen“), sonst die Felder */
+function wzCount(d){
+  const items=d.items||[];
+  if(d.count==='rows')return items.reduce((n,it)=>n+(Array.isArray(it.value)?it.value.length:0),0);
+  return items.length;
+}
 function wzSection(d){
-  const id=d.id,items=d.items||[],meta=items.length+(items.length===1?' Eintrag':' Einträge');
+  const id=d.id,items=d.items||[],n=wzCount(d),meta=n+(n===1?' Eintrag':' Einträge');
   const inner=(d.intro?'<p class="wz-sub">'+esc(d.intro)+'</p>':'')+wzBody(items)
     +(d.updatedAt?'<div class="wz-bar"><span class="wz-when">Zuletzt geändert '+esc(wzWhen(d.updatedAt))+'</span></div>':'');
   return '<details class="card wz" data-wz="'+esc(id)+'"'+(UI.wOpen[id]?' open':'')+'><summary><h2 class="h3">'+esc(d.title)+'</h2><span class="wz-meta">'+meta+'</span></summary>'+inner+'</details>';
