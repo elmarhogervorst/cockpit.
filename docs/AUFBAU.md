@@ -98,7 +98,7 @@ Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"K
 | `exercises` | beliebig             | Übungen: Name, Muskelgruppe, Beschreibung, zeitbasiert ja/nein                                                    |
 | `presets`   | beliebig             | Trainingsvorlagen: Name, Reihenfolge, Übungen mit Sätzen                                                          |
 | `days`      | Datum `JJJJ-MM-TT`   | Ein Tag: Plan, Training (`workout`), Mahlzeiten (`meals`), Aktivitäten, Check-in, Ziele des Tages, Wasser, Gewicht |
-| `wissen`    | `vorlieben`, `regeln`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
+| `wissen`    | `vorlieben`, `regeln`, `spaeter`, `entscheidungen`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
 | `ki`        | `systemprompt`       | Anweisung an Claude (`title`, `text`, `updatedAt`), angezeigt über den Claude-Knopf in der Kopfzeile              |
 
 Reiter in der Oberfläche: Übersicht (`overview`), Training (`training`), Ernährung (`nutrition`) und **Wissen** (Reiter-ID `body`,
@@ -111,7 +111,9 @@ Datenmodells. Jedes Dokument hat `title`, `intro`, `order`, `items[]` (Felder mi
 `table`) und optional `layout`. Bei `list` ist `value` eine Liste von Sätzen. Das Feld `group` darf `Hauptgruppe: Untergruppe`
 heißen; die Seite macht daraus eine Überschrift mit einem Kasten je Untergruppe, Tabellen erscheinen als Karten je Zeile.
 Jedes Dokument ist ein Block, der sich ein- und ausklappen lässt (zu Beginn zu, die Wahl bleibt beim Reiterwechsel erhalten).
-Die Oberfläche zeichnet sie generisch und **nur lesend**: Sie bietet keine Eingabefelder und
+`wissen/spaeter` führt Punkte, die später geprüft werden (mit Datum oder Zeitraum), `wissen/entscheidungen` bestätigte
+Entscheidungen mit Begründung und bisherigem Wert; beide sind Tabellen (Spalten mit `kind` `text` oder `date`). Claude trägt dort
+nur nach Bestätigung des Nutzers etwas ein. Die Oberfläche zeichnet sie generisch und **nur lesend**: Sie bietet keine Eingabefelder und
 schreibt nie in `wissen`. Geändert wird es allein von Claude (per SQL), auf Wunsch im Chat. Das Dokument `datenmodell`
 (`layout: model`) ist für Claude gedacht und wird auf der Seite nicht angezeigt. Die Sperre gilt nur in der Oberfläche, nicht
 in der Datenbank (der angemeldete Eigentümer dürfte technisch schreiben).

@@ -594,6 +594,7 @@ details.wz[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
 .wz-dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(76px,1fr));gap:8px 10px;margin:8px 0 0}
 .wz-dl>div{min-width:0}
 .wz-dw{grid-column:1/-1}
+.wz-dd{grid-column:span 2;white-space:nowrap}
 .wz-dl dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);margin:0 0 2px}
 .wz-dl dd{margin:0;font-weight:500;overflow-wrap:break-word}
 @media (min-width:700px){.wz-dl{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}

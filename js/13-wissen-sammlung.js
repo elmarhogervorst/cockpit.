@@ -3,7 +3,7 @@
 /* ---------- Wissen ----------
    Zentrale Sammlung wissen/<id>: Vorlieben, Regeln, Datenmodell. Jedes Dokument beschreibt sich selbst:
    {title,intro,order,layout?,updatedAt,items:[{key,group,label,kind,value,unit?,hint?,columns?}]}.
-   kind: number, text, bool, list (value = Liste von Sätzen) oder table (Spalten in columns, Zeilen in value).
+   kind: number, text, bool, list (value = Liste von Sätzen) oder table (Spalten in columns mit kind text, number, select, time oder date, Zeilen in value).
    group darf "Hauptgruppe: Untergruppe" heißen; die Seite gliedert danach in eine Überschrift und darunter Felder je Untergruppe.
    Die Seite enthält keine Werte, sie zeichnet nur, was in der Sammlung steht, und ändert nichts daran: Nur Claude schreibt
    in diese Dokumente (siehe ki/systemprompt). Jedes Dokument ist ein Block, der sich ein- und ausklappen lässt (zu Beginn zu).
@@ -17,7 +17,7 @@ function wzWhen(s){
 }
 function wzCellText(c,v){
   if(c.kind==='select'){const o=(c.options||[]).find(x=>String(x[0])===String(v));return o?o[1]:(v==null?'':String(v));}
-  if(c.kind==='text'||c.kind==='time')return v==null?'':String(v);
+  if(c.kind==='text'||c.kind==='time'||c.kind==='date')return v==null?'':String(v);
   return inputNum(v);
 }
 /* Tabellen werden je Zeile als kleine Karte gezeigt: erste Spalte als Titel, die übrigen als Felder mit Beschriftung.
@@ -38,7 +38,7 @@ function wzTable(it){
     }
     const cells=rest.map(c=>{
       const v=wzCellHtml(c,r);
-      return v?'<div'+(c.kind==='text'?' class="wz-dw"':'')+'><dt>'+esc(c.label)+'</dt><dd>'+v+'</dd></div>':'';
+      return v?'<div'+(c.kind==='text'?' class="wz-dw"':c.kind==='date'?' class="wz-dd"':'')+'><dt>'+esc(c.label)+'</dt><dd>'+v+'</dd></div>':'';
     }).join('');
     return '<div class="wz-row"><div class="wz-rt">'+title+'</div>'+(cells?'<dl class="wz-dl">'+cells+'</dl>':'')+'</div>';
   }).join('')+'</div>';
