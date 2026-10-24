@@ -1,5 +1,5 @@
 'use strict';
-/* Start und Grenzen, Wochenwahl, Darstellung, Backup, Bestätigungsfenster */
+/* Start und Grenzen, Wochenwahl, Darstellung, Claude-Anweisung, Bestätigungsfenster */
 /* ---------- Start und Grenzen ---------- */
 /* Ab diesem Tag zählt das Cockpit. Gibt es ältere Dokumente, bleiben sie erreichbar. */
 const START_DATE='2026-10-20';
@@ -110,23 +110,6 @@ $('#btn-theme').addEventListener('click',()=>{
 });
 applyTheme(getTheme());
 
-/* ---------- Kopfzeile: Export ---------- */
-$('#btn-export').innerHTML=I.dl;
-$('#btn-export').addEventListener('click',async()=>{
-  if(!DB){toast('Keine Verbindung zu deinen Daten');return;}
-  try{
-    const all=await DB.collection('days').get();
-    const days={};all.docs.forEach(d=>{days[d.id]=d.data();});
-    const out={exportiert:new Date().toISOString(),profile:S.profile,targets:S.targets,exercises:S.exercises,presets:S.presets,wissen:S.wissen,ki:S.ki,days};
-    /* Als Datei auf dem Gerät speichern. Das Backup enthält deine persönlichen Daten: nicht ins Repo legen. */
-    const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download='cockpit-backup-'+TODAY()+'.json';
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),5000);
-    toast('Backup gespeichert');
-  }catch(e){toast('Backup nicht möglich');}
-});
 /* ---------- Kopfzeile: Claude-Anweisung (nur lesen, Text aus ki/systemprompt) ---------- */
 $('#btn-claude').innerHTML=I.claude;
 function fillClaude(){

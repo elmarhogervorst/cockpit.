@@ -1,5 +1,5 @@
 # Persönliche Daten gehören nie ins Repo (das Repo ist öffentlich).
-# Backups aus dem Knopf "Backup" und Exporte bleiben auf dem Gerät.
+# Alte Backup-Dateien (der Backup-Knopf wurde entfernt) und Exporte bleiben auf dem Gerät.
 cockpit-backup-*.json
 backup/
 export/

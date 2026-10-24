@@ -25,7 +25,7 @@ def synthetic():
         return {"day": dow[d.weekday()], "kind": kind, "name": name, "exercises": exercises, "presetId": None, "source": "own", "updatedAt": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")}
     bench = {"exerciseId": "bank", "name": "Bankdrücken", "sets": sets(60, 8), "timed": False}
     rows = [
-        {"collection": "profile", "id": "main", "data": {"sex": "male", "age": 30, "height": 180, "startWeight": 78, "goalWeight": 85, "goal": "build", "updatedAt": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")}},
+        {"collection": "profile", "id": "main", "data": {"sex": "male", "age": 30, "height": 180, "goalWeight": 85, "goal": "build", "updatedAt": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")}},
         {"collection": "targets", "id": "main", "data": {"waterGoalMl": 3000}},
         ex("bank", "Bankdrücken", "Brust"), ex("rudern", "Rudern", "Rücken"), ex("kniebeuge", "Kniebeuge", "Beine"),
         {"collection": "presets", "id": "push", "data": {"name": "Push", "order": 1, "exercises": [bench]}},
@@ -207,13 +207,9 @@ def run(rows, today, label, full):
             check("Seite bleibt nach Fehler benutzbar", len(page.inner_text("#view")) > 40)
         problems[:] = [x for x in problems if "permission denied" not in x]
 
-        # 7. Backup
-        with page.expect_download() as dl:
-            page.click("#btn-export")
-        data = json.load(open(dl.value.path(), encoding="utf-8"))
-        check("Backup enthält Tage, Profil und Wissen", isinstance(data.get("days"), dict) and len(data["days"]) >= 1 and data.get("profile") and data.get("wissen") is not None)
-        if not full:
-            check("Backup enthält die Claude-Anweisung", bool((data.get("ki") or {}).get("text")))
+        # 7. Es gibt keinen Backup-Knopf mehr (die Sicherung läuft nicht über die Seite)
+        check("Kopfzeile hat keinen Backup-Knopf mehr", page.locator("#btn-export, [aria-label*='Backup'], [title*='Backup']").count() == 0)
+        check("Kopfzeile hat noch Darstellung, Claude und Abmelden", all(page.locator(s).count() == 1 for s in ("#btn-theme", "#btn-claude", "#btn-logout")))
 
         # 8. Sitzung bleibt nach Neuladen, Abmelden sperrt wieder
         page.reload(); page.wait_for_selector("#gate", state="hidden", timeout=8000)

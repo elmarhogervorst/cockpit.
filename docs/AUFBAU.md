@@ -34,7 +34,7 @@ usw. aus `01`/`03` sind in allen späteren Dateien sichtbar. **Die Reihenfolge i
 `'use strict';`.
 
 Die Anwendung stammt aus einer einzigen großen HTML-Datei und wurde an den Abschnittsmarken in Dateien zerlegt, ohne den Code
-inhaltlich umzuschreiben. Geändert wurde nur: Datenbankzugriff (`02`), Fehlertexte (`02`, `03`, `13`), Backup und Abmelden (`05`),
+inhaltlich umzuschreiben. Geändert wurde nur: Datenbankzugriff (`02`), Fehlertexte (`02`, `03`, `13`), Abmelden (`05`),
 ein zusätzliches Symbol (`01`).
 
 ## 3. Anmeldung (`js/auth.js`)
@@ -163,12 +163,13 @@ bedeutungslos und wird bewusst hingenommen.
   verwendet und darf nie ins Repo.
 
 **Grenzen:** GitHub Pages ist öffentlich erreichbar. Wer den Link kennt, sieht den Code und die Anmeldeseite, aber keine Daten. Die
-Stärke des Schutzes hängt am Passwort. Das Backup (JSON) enthält persönliche Daten und gehört nur auf das eigene Gerät.
+Stärke des Schutzes hängt am Passwort. Sicherungskopien enthalten persönliche Daten und gehören nicht ins Repo.
 
 ## 7. Betrieb
 
-- **Backup:** Knopf in der Kopfzeile lädt `cockpit-backup-JJJJ-MM-TT.json` herunter. Der Free-Tarif von Supabase hat keine
-  automatischen Backups. Empfehlung: regelmäßig sichern, die Datei nicht ins Repo legen.
+- **Backup:** Die Seite hat keinen Backup-Knopf. Der Free-Tarif von Supabase hat keine automatischen Backups. Kopien einzelner
+  Dokumente legt bei Bedarf Claude in der Datenbank an (Schema `private`, nicht über die API erreichbar); eine vollständige
+  Sicherung der Tabelle `docs` geht über das Supabase-Dashboard. Sicherungsdateien gehören nicht ins Repo.
 - **Pausierung:** Free-Projekte ohne Aktivität werden nach etwa einer Woche pausiert und im Dashboard wieder gestartet.
 - **Schema ändern:** neue Datei in `supabase/migrations/` anlegen (fortlaufende Nummer) und im SQL-Editor ausführen; die Dateien
   sind das Protokoll, wie die Datenbank entstanden ist.
@@ -188,7 +189,7 @@ Stärke des Schutzes hängt am Passwort. Das Backup (JSON) enthält persönliche
 - Wasser eintragen und ein Wissen-Feld speichern landen in der (nachgebauten) Datenbank.
 - Eine Änderung „von einem anderen Gerät“ erscheint ohne Neuladen.
 - Ein verweigertes Speichern zeigt eine Meldung, die Seite bleibt benutzbar.
-- Backup liefert eine JSON-Datei mit Tagen, Profil und Wissen.
+- Die Kopfzeile hat keinen Backup-Knopf mehr, aber noch Darstellung, Claude und Abmelden.
 - Die Sitzung überlebt ein Neuladen; Abmelden sperrt die Seite wieder.
 
 Nicht abgedeckt, weil nur mit dem echten Projekt prüfbar: echte Netzwerkverbindung, die E-Mail zum Zurücksetzen des Passworts und das

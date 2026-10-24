@@ -31,7 +31,6 @@ const shortName=n=>String(n||'').split(' ')[0];
 
 const SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 const I={
-  dl:SVG+'<path d="M12 4v11"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg>',
   edit:SVG+'<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>',
   trash:SVG+'<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6.5 7l1 13h9l1-13"/></svg>',
   check:SVG+'<path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',

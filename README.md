@@ -21,7 +21,7 @@ js/
   02-datenbank.js     Laden aller Sammlungen, Live-Abo, Fehlertexte
   03-oberflaeche.js   Zeichnen, Reiter, Meldungen
   04-berechnungen.js  Kalorien, Makros, Fortschritt
-  05-kopfzeile-dialoge.js  Wochenwahl, Darstellung, Backup, Abmelden, Bestätigungsdialog
+  05-kopfzeile-dialoge.js  Wochenwahl, Darstellung, Claude-Anweisung, Abmelden, Bestätigungsdialog
   06-uebersicht.js    Reiter Übersicht
   07-ernaehrung.js    Reiter Ernährung
   08-aktivitaeten-wasser.js  Aktivitäten und Wasser
@@ -47,8 +47,6 @@ Reihenfolge der Nummern geladen. Details dazu in [docs/AUFBAU.md](docs/AUFBAU.md
 - Auf dem Handy: Seite öffnen, anmelden, dann „Zum Startbildschirm hinzufügen“. Die Sitzung bleibt auf dem Gerät erhalten.
 - „Claude“ (Funkeln in der Kopfzeile, links neben Abmelden) zeigt die Anweisung, nach der Claude im Cockpit arbeitet. Sie liegt in
   der Datenbank (`ki/systemprompt`) und lässt sich kopieren.
-- „Backup“ (Pfeil nach unten in der Kopfzeile) lädt alle Daten als JSON-Datei auf das Gerät. Diese Datei enthält persönliche Daten:
-  nicht ins Repo legen (die `.gitignore` fängt `cockpit-backup-*.json` ab).
 
 ## Einrichtung (einmalig)
 
@@ -112,11 +110,13 @@ python3 tests/run_tests.py
 ```
 
 Die Tests laden die Seite in einem echten Browser und ersetzen Supabase durch `tests/mock-supabase.js` (erfundene Zugangsdaten,
-erfundene Daten). Geprüft werden Anmeldung, alle Reiter, Speichern, Änderungen von einem anderen Gerät, Fehlerfall, Backup und
+erfundene Daten). Geprüft werden Anmeldung, alle Reiter, Speichern, Änderungen von einem anderen Gerät, Fehlerfall und
 Abmelden. Mit `--echt <Ordner>` läuft zusätzlich ein Durchlauf mit eigenen Exportdaten (lokal, Ordner nicht einchecken).
 Der Test gegen die echte Datenbank bleibt Handarbeit: anmelden, etwas ändern, auf einem zweiten Gerät nachsehen.
 
 ## Betrieb und Grenzen (Supabase Free)
 
 - Ein Projekt ohne Aktivität wird nach etwa einer Woche pausiert; ein Aufruf im Dashboard weckt es wieder auf.
-- Es gibt auf dem Free-Tarif **keine automatischen Backups**. Den Knopf „Backup“ regelmäßig benutzen.
+- Es gibt auf dem Free-Tarif **keine automatischen Backups**, und die Seite hat keinen Backup-Knopf. Kopien einzelner Dokumente
+  legt bei Bedarf Claude in der Datenbank an (Schema `private`); eine vollständige Sicherung der Tabelle `docs` geht über das
+  Supabase-Dashboard.
