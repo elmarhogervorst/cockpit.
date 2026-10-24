@@ -63,9 +63,13 @@ function subscribe(){
   DB.collection('wissen').onSnapshot(s=>{
     const next={};s.docs.forEach(d=>{next[d.id]=clone(d.data());});
     S.wissen=next;UI.wErr=false;
-    Object.keys(UI.wDraft).forEach(k=>{if(!UI.wDirty[k])UI.wDraft[k]=null;});
     LOADED.wissen=true;requestRender();
   },e=>{console.error(e);UI.wErr=true;requestRender();});
+  /* Claude-Anweisung (ki/systemprompt): wird nur im Fenster der Kopfzeile gezeigt und blockiert den Start nicht */
+  DB.doc('ki/systemprompt').onSnapshot(s=>{
+    S.ki=s.exists?clone(s.data()):null;S.kiLoaded=true;
+    if(typeof fillClaude==='function')fillClaude();
+  },e=>{console.error(e);S.kiLoaded=true;S.kiErr=true;if(typeof fillClaude==='function')fillClaude();});
   on(DB.collection('days').orderBy('date','desc'),'days',s=>{
     const next={};
     s.docs.forEach(d=>{next[d.id]=clone(d.data());});

@@ -117,7 +117,7 @@ $('#btn-export').addEventListener('click',async()=>{
   try{
     const all=await DB.collection('days').get();
     const days={};all.docs.forEach(d=>{days[d.id]=d.data();});
-    const out={exportiert:new Date().toISOString(),profile:S.profile,targets:S.targets,exercises:S.exercises,presets:S.presets,wissen:S.wissen,days};
+    const out={exportiert:new Date().toISOString(),profile:S.profile,targets:S.targets,exercises:S.exercises,presets:S.presets,wissen:S.wissen,ki:S.ki,days};
     /* Als Datei auf dem Gerät speichern. Das Backup enthält deine persönlichen Daten: nicht ins Repo legen. */
     const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -127,6 +127,35 @@ $('#btn-export').addEventListener('click',async()=>{
     toast('Backup gespeichert');
   }catch(e){toast('Backup nicht möglich');}
 });
+/* ---------- Kopfzeile: Claude-Anweisung (nur lesen, Text aus ki/systemprompt) ---------- */
+$('#btn-claude').innerHTML=I.claude;
+function fillClaude(){
+  const k=S.ki;
+  $('#claude-t').textContent=(k&&k.title)||'Claude-Anweisung';
+  $('#claude-text').textContent=k&&k.text?k.text:S.kiErr?'Die Anweisung konnte nicht geladen werden.':S.kiLoaded?'Noch keine Anweisung gespeichert. Bitte Claude im Chat, sie anzulegen.':'Lade …';
+  $('#claude-when').textContent=k&&k.updatedAt?'Zuletzt geändert '+wzWhen(k.updatedAt):'';
+  $('#claude-copy').disabled=!(k&&k.text);
+}
+$('#btn-claude').addEventListener('click',()=>{
+  if(!DB){toast('Keine Verbindung zu deinen Daten');return;}
+  const d=$('#claude-dlg');
+  fillClaude();$('#claude-copy').textContent='Kopieren';
+  try{d.showModal();}catch(e){d.setAttribute('open','');}
+});
+(function(){
+  const d=$('#claude-dlg');
+  const close=()=>{try{d.close();}catch(e){d.removeAttribute('open');}};
+  $('#claude-close').addEventListener('click',close);
+  d.addEventListener('click',e=>{if(e.target===d)close();});
+  $('#claude-copy').addEventListener('click',async()=>{
+    const b=$('#claude-copy');
+    try{await navigator.clipboard.writeText((S.ki&&S.ki.text)||'');b.textContent='Kopiert';}
+    catch(e){
+      try{const r=document.createRange();r.selectNodeContents($('#claude-text'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Markiert';}
+      catch(e2){b.textContent='Nicht möglich';}
+    }
+  });
+})();
 /* ---------- Kopfzeile: Abmelden ---------- */
 $('#btn-logout').innerHTML=I.out;
 $('#btn-logout').addEventListener('click',async()=>{

@@ -67,7 +67,7 @@ VIEWS.body=function(){
     +'<div class="fgroup"><label class="lbl" for="pf-notes">Trainingsvorlieben und Hinweise</label><textarea class="field" id="pf-notes" rows="5" maxlength="1500" data-live="pft" data-k="trainingNotes" placeholder="Zum Beispiel: Ziel Muskelaufbau. Im Alltag viel Sitzen, dazu 2 × Padel pro Woche. Ich möchte 4 Tage pro Woche trainieren, höchstens 60 Minuten, am liebsten Push/Pull/Legs. Sonntag ist immer frei. Schulter macht Probleme.">'+esc(p.trainingNotes||'')+'</textarea></div>'
     +'<div style="border-top:1px solid var(--line);padding-top:18px"><button type="button" class="btn pri" data-act="pf-save">Daten speichern</button></div></section>';
   return '<div class="pagehead"><div class="kicker">'+esc(longDate(TODAY()))+'</div><h1 class="title">Wissen</h1></div>'
-    +'<p class="wz-intro">Hier steht, was das Cockpit über dich weiß: deine Daten, dein Gewicht, deine Vorlieben und die Regeln, nach denen Claude plant und auswertet. Claude liest diese Seite bei jeder Planung und Auswertung neu. Was du hier änderst, gilt ab dem nächsten Mal.</p>'
+    +'<p class="wz-intro">Oben stehen deine Daten und dein Gewicht, die du hier selbst pflegst. Darunter steht das feste Regelwerk, nach dem Claude plant und auswertet: deine Vorlieben, die Regeln für Training und Ernährung und die Auswertung. Das kannst du hier nachlesen. Geändert wird es nur von Claude, wenn du es im Chat willst.</p>'
     +'<div class="grid2 even">'+left+weightCard()+'</div>'
     +wissenHtml();
 };

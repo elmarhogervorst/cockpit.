@@ -33,6 +33,7 @@
     <div class="tools">
       <button type="button" class="iconbtn" id="btn-theme" aria-label="Darstellung wechseln" title="Darstellung wechseln"></button>
       <button type="button" class="iconbtn" id="btn-export" aria-label="Daten als Backup herunterladen" title="Backup herunterladen"></button>
+      <button type="button" class="iconbtn" id="btn-claude" aria-label="Claude-Anweisung anzeigen" title="Claude-Anweisung"></button>
       <button type="button" class="iconbtn" id="btn-logout" aria-label="Abmelden" title="Abmelden"></button>
     </div>
   </header>
@@ -47,6 +48,18 @@
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
       <button type="button" class="btn pri" id="confirm-ok">Überschreiben</button>
       <button type="button" class="btn" id="confirm-cancel">Abbrechen</button>
+    </div>
+  </div>
+</dialog>
+<dialog id="claude-dlg" aria-labelledby="claude-t">
+  <div class="dlg">
+    <h2 class="h2" id="claude-t">Claude-Anweisung</h2>
+    <p class="claude-sub">So arbeitet Claude in deinem cockpit. Der Text liegt in der Datenbank (ki/systemprompt).</p>
+    <pre class="claude-text" id="claude-text" tabindex="0"></pre>
+    <p class="claude-when" id="claude-when"></p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+      <button type="button" class="btn pri" id="claude-copy">Kopieren</button>
+      <button type="button" class="btn" id="claude-close">Schließen</button>
     </div>
   </div>
 </dialog>

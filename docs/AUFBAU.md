@@ -99,16 +99,29 @@ Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"K
 | `presets`   | beliebig             | Trainingsvorlagen: Name, Reihenfolge, Übungen mit Sätzen                                                          |
 | `days`      | Datum `JJJJ-MM-TT`   | Ein Tag: Plan, Training (`workout`), Mahlzeiten (`meals`), Aktivitäten, Check-in, Ziele des Tages, Wasser, Gewicht |
 | `wissen`    | `vorlieben`, `regeln`, `auswertung`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
+| `ki`        | `systemprompt`       | Anweisung an Claude (`title`, `text`, `updatedAt`), angezeigt über den Claude-Knopf in der Kopfzeile              |
 
 Reiter in der Oberfläche: Übersicht (`overview`), Training (`training`), Ernährung (`nutrition`) und **Wissen** (Reiter-ID `body`,
 historisch „Körper“).
 
 ### Reiter „Wissen“
 
-Zentrale Stelle für alles, was das Cockpit „weiß“ und was sonst nur im Chat erfragbar wäre: Vorlieben, Regeln, Auswertung und
-eine Beschreibung des Datenmodells. Jedes Dokument hat `title`, `intro`, `order`, `items[]` (Felder mit `kind`: `number`,
-`table`, `model` …) und optional `fold`/`layout`. Die Oberfläche zeichnet sie generisch; Inhalte ändern sich dadurch ohne
-Code-Änderung.
+Das feste Regelwerk, nach dem Claude plant und auswertet: Vorlieben, Regeln, Auswertung, dazu eine Beschreibung des
+Datenmodells. Jedes Dokument hat `title`, `intro`, `order`, `items[]` (Felder mit `kind`: `number`, `text`, `bool`, `table`)
+und optional `fold`/`layout`. Die Oberfläche zeichnet sie generisch und **nur lesend**: Sie bietet keine Eingabefelder und
+schreibt nie in `wissen`. Geändert wird es allein von Claude (per SQL), auf Wunsch im Chat. Das Dokument `datenmodell`
+(`layout: model`) ist für Claude gedacht und wird auf der Seite nicht angezeigt. Die Sperre gilt nur in der Oberfläche, nicht
+in der Datenbank (der angemeldete Eigentümer dürfte technisch schreiben).
+
+Der Reiter zeigt außerdem „Deine Daten“ (Profil) und den Gewichtsverlauf. Das Profil ist die eine Stelle auf dieser Seite, die du
+selbst änderst.
+
+### Claude-Anweisung
+
+Der Knopf „Claude“ in der Kopfzeile öffnet ein Fenster mit dem Text aus `ki/systemprompt`: Ablauf (auswerten, Training planen,
+Nährwerte planen), wo die Daten liegen (mit Verweis auf `wissen/datenmodell`), Schreibregeln (`log_meal`, `merge_doc`) und
+Grundsätze. Das Fenster ist nur lesend und hat einen Kopieren-Knopf; der Text wird, wie alles andere, nur über die Datenbank
+geändert.
 
 ## 6. Sicherheit
 

@@ -41,6 +41,9 @@ def synthetic():
             {"group": "Ernährung", "key": "ernaehrung.alltagsfaktor", "kind": "number", "label": "Alltagsfaktor", "step": 0.025, "value": 1.375},
             {"group": "Training", "key": "training.sport_fest", "kind": "table", "label": "Sport", "editRows": True, "value": [{"name": "Tennis", "tag": "do", "von": "16:00", "bis": "17:00", "sicher": "fest", "hinweis": ""}],
              "columns": [{"k": "name", "kind": "text", "label": "Sport"}, {"k": "tag", "kind": "select", "label": "Tag", "options": [["do", "Donnerstag"]]}, {"k": "von", "kind": "time", "label": "von"}, {"k": "bis", "kind": "time", "label": "bis"}, {"k": "sicher", "kind": "select", "label": "Sicherheit", "options": [["fest", "fest"]]}, {"k": "hinweis", "kind": "text", "label": "Hinweis"}]}]}},
+        {"collection": "wissen", "id": "regeln", "data": {"title": "Regeln", "intro": "Test", "order": 2, "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
+            {"group": "Training: Wochenaufbau", "key": "training.aufteilung", "kind": "text", "label": "Aufteilung der Einheiten", "value": "Bei 3 Einheiten Ganzkörper."}]}},
+        {"collection": "ki", "id": "systemprompt", "data": {"title": "Claude-Anweisung", "updatedAt": "2026-01-01T00:00:00.000Z", "text": "Testanweisung: Lies zuerst wissen/datenmodell."}},
         {"collection": "wissen", "id": "datenmodell", "data": {"title": "Datenmodell", "intro": "Test", "order": 4, "fold": True, "layout": "model", "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
             {"group": "Profil", "key": "profile.age", "kind": "model", "label": "Alter", "typ": "zahl", "pflicht": True}]}},
     ]
@@ -57,6 +60,14 @@ results = []
 def check(name, ok, detail=""):
     results.append((name, bool(ok), detail))
     print(("  ok   " if ok else "  FEHLT ") + name + (("  -> " + str(detail)) if (detail and not ok) else ""))
+
+def wait_until(page, js, timeout=8000):
+    """Wartet, bis der JavaScript-Ausdruck wahr ist. Fragt per evaluate ab (wait_for_function nutzt eval, das die strenge CSP der Seite verbietet)."""
+    waited = 0
+    while not page.evaluate("() => " + js):
+        if waited >= timeout:
+            raise TimeoutError("Bedingung nicht erfüllt: " + js)
+        page.wait_for_timeout(100); waited += 100
 
 def serve():
     class Leise(http.server.SimpleHTTPRequestHandler):
@@ -89,12 +100,12 @@ def run(rows, today, label, full):
         check("kein „Passwort vergessen“ und keine Registrierung auf der Anmeldeseite", not any(w in page.inner_text("#gate").lower() for w in ("vergessen", "registr", "konto erstellen")))
         check("ohne Anmeldung keine Daten im Dokument", "Haferflocken" not in page.inner_text("body") and "Bankdrücken" not in page.inner_text("body"))
         page.fill("#gate-email", MAIL); page.fill("#gate-pw", "falsch"); page.click("#gate-submit")
-        page.wait_for_function("document.getElementById('gate-msg').textContent.length>0")
+        wait_until(page, "document.getElementById('gate-msg').textContent.length>0")
         check("falsches Passwort wird abgewiesen", "stimmt nicht" in page.inner_text("#gate-msg") and page.is_visible("#gate"), page.inner_text("#gate-msg"))
         check("nach Fehlversuch bleiben Daten unsichtbar", "Haferflocken" not in page.inner_text("body"))
         page.fill("#gate-pw", PW); page.click("#gate-submit")
         page.wait_for_selector("#gate", state="hidden")
-        page.wait_for_function("document.querySelector('#view .empty')===null || !/Lade deine Daten/.test(document.querySelector('#view').innerText)", timeout=8000)
+        wait_until(page, "document.querySelector('#view .empty')===null || !/Lade deine Daten/.test(document.querySelector('#view').innerText)")
         check("nach Anmeldung verschwindet die Anmeldung", not page.is_visible("#gate"))
 
         # 2. Alle Reiter zeichnen ohne Fehler
@@ -131,16 +142,24 @@ def run(rows, today, label, full):
         else:
             check("Wasser-Knopf gefunden", False)
 
-        # 4. Wissen bearbeiten und speichern
+        # 4. Wissen ist nur lesbar, Datenmodell und Startgewicht werden nicht gezeigt
         if not full:
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)
-            inp = page.locator("#wz-vorlieben-ernaehrung_alltagsfaktor")
-            check("Wissen zeigt Vorlieben-Feld", inp.count() == 1)
-            if inp.count():
-                inp.fill("1.45")
-                page.click('[data-act="wz-save"][data-doc="vorlieben"]'); page.wait_for_timeout(500)
-                v = page.evaluate("(window.__MOCK_STORE__.get('wissen','vorlieben').items.find(i=>i.key==='ernaehrung.alltagsfaktor')||{}).value")
-                check("Änderung in Wissen landet in der Datenbank", v == 1.45, v)
+            txt = page.inner_text("#view")
+            check("Wissen zeigt den Vorlieben-Wert", "Alltagsfaktor" in txt and "1,375" in txt, txt[:200].replace("\n", " "))
+            check("Wissen zeigt den Regeltext", "Bei 3 Einheiten Ganzkörper." in txt)
+            check("Wissen hat keine Eingabefelder und keinen Speichern-Knopf", page.locator("#view .wz input, #view .wz textarea, #view .wz select, #view [data-act^='wz-']").count() == 0)
+            check("Datenmodell wird nicht angezeigt", "Datenmodell" not in txt)
+            check("Startgewicht gibt es nicht mehr", "Startgewicht" not in txt)
+            check("Deine Daten bleiben editierbar", page.locator("#pf-age").count() == 1)
+
+        # 4b. Claude-Anweisung über den Knopf in der Kopfzeile
+        if not full:
+            check("Claude-Knopf steht vor dem Abmelden-Knopf", page.evaluate("document.querySelector('#btn-claude').nextElementSibling.id") == "btn-logout")
+            page.click("#btn-claude"); page.wait_for_selector("#claude-dlg[open]")
+            check("Claude-Fenster zeigt die gespeicherte Anweisung", "Lies zuerst wissen/datenmodell" in page.inner_text("#claude-text"), page.inner_text("#claude-text"))
+            page.click("#claude-close"); page.wait_for_selector("#claude-dlg", state="hidden")
+            check("Claude-Fenster lässt sich schließen", not page.evaluate("document.querySelector('#claude-dlg').open"))
 
         # 5. Änderung von einem anderen Gerät (Realtime) erscheint
         page.click('#nav button[data-tab="overview"]'); page.wait_for_timeout(200)
@@ -166,6 +185,8 @@ def run(rows, today, label, full):
             page.click("#btn-export")
         data = json.load(open(dl.value.path(), encoding="utf-8"))
         check("Backup enthält Tage, Profil und Wissen", isinstance(data.get("days"), dict) and len(data["days"]) >= 1 and data.get("profile") and data.get("wissen") is not None)
+        if not full:
+            check("Backup enthält die Claude-Anweisung", bool((data.get("ki") or {}).get("text")))
 
         # 8. Sitzung bleibt nach Neuladen, Abmelden sperrt wieder
         page.reload(); page.wait_for_selector("#gate", state="hidden", timeout=8000)

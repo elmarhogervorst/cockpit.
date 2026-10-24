@@ -45,16 +45,17 @@ const I={
   moon:SVG+'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>',
   auto:SVG+'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>',
   copy:SVG+'<rect x="8" y="8" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>',
-  out:SVG+'<path d="M10 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4"/><path d="m15 8 4 4-4 4"/><path d="M19 12H9"/></svg>'
+  out:SVG+'<path d="M10 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4"/><path d="m15 8 4 4-4 4"/><path d="M19 12H9"/></svg>',
+  claude:SVG+'<path d="M11 3.5l1.7 5.3 5.3 1.7-5.3 1.7L11 17.5l-1.7-5.3L4 10.5l5.3-1.7z"/><path d="M18.5 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>'
 };
 
 /* ---------- Zustand ---------- */
-const S={profile:null,targets:null,exercises:[],plan:{},presets:[],days:{},wissen:{}};
+const S={profile:null,targets:null,exercises:[],plan:{},presets:[],days:{},wissen:{},ki:null,kiLoaded:false,kiErr:false};
 const UI={
   tab:'overview',trainTab:'today',trainDate:null,nutDate:null,openEx:{},
   planDate:null,planDraft:null,planDirty:false,planSrc:'own',planScope:null,planBase:'',editingPreset:null,wk:null,
   exFilter:'Alle',exSearch:'',exEdit:null,exForm:null,confirmDel:null,
-  profDraft:null,profDirty:false,wDraft:{},wDirty:{},wBase:{},wOpen:{},wErr:false,
+  profDraft:null,profDirty:false,wOpen:{},wErr:false,
   mealForm:{name:'',kcal:'',protein:'',carbs:'',fat:'',ing:null},mealEdit:null,mealOpen:{},ingNew:{},ingAddOpen:{},ingEdit:null,repeatN:3,
   ciDate:null,actDate:null,actForm:{name:'',note:'',min:'',time:'',id:null},actOpen:false,nfDraft:null,tmEdit:null,tmDraft:null,actInfo:false,skipDraft:null,waterDate:null,waterSet:false,waterForm:null,animUntil:0,focusSel:null,dbOff:false,dbErr:null
 };

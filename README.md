@@ -28,8 +28,8 @@ js/
   09-training-heute.js  Training: heute
   10-training-plan.js   Training: Plan und Vorlagen
   11-uebungsbibliothek.js  Training: Übungen
-  12-wissen-daten.js  Reiter Wissen: Daten und Beschreibung
-  13-wissen-sammlung.js  Reiter Wissen: Anzeige und Bearbeiten
+  12-wissen-daten.js  Reiter Wissen: Deine Daten (editierbar) und Gewichtsverlauf
+  13-wissen-sammlung.js  Reiter Wissen: Regelwerk von Claude, nur lesen
   14-start.js         Start
   vendor/supabase.js  Supabase-Bibliothek (supabase-js, MIT), Version in VERSION.txt
 supabase/migrations/  Datenbankschema, Zugriffsregeln, Registrierungssperre, Funktion log_meal (Mahlzeit von außen eintragen)
@@ -45,6 +45,8 @@ Reihenfolge der Nummern geladen. Details dazu in [docs/AUFBAU.md](docs/AUFBAU.md
 - Adresse (GitHub Pages): `https://elmarhogervorst.github.io/cockpit./`
 - Anmelden geht nur mit E-Mail und Passwort. **Registrieren gibt es nicht.** Wer den Link kennt, sieht nur die Anmeldeseite.
 - Auf dem Handy: Seite öffnen, anmelden, dann „Zum Startbildschirm hinzufügen“. Die Sitzung bleibt auf dem Gerät erhalten.
+- „Claude“ (Funkeln in der Kopfzeile, links neben Abmelden) zeigt die Anweisung, nach der Claude im Cockpit arbeitet. Sie liegt in
+  der Datenbank (`ki/systemprompt`) und lässt sich kopieren.
 - „Backup“ (Pfeil nach unten in der Kopfzeile) lädt alle Daten als JSON-Datei auf das Gerät. Diese Datei enthält persönliche Daten:
   nicht ins Repo legen (die `.gitignore` fängt `cockpit-backup-*.json` ab).
 
