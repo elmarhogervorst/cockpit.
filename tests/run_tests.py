@@ -8,7 +8,7 @@ bleibt lokal und gehört nicht ins Repo.
 Aufruf:  python3 tests/run_tests.py [--echt ORDNER]
 Voraussetzung: Python-Paket playwright mit Chromium.
 """
-import argparse, datetime as dt, functools, glob, http.server, json, os, sys, threading
+import argparse, datetime as dt, functools, glob, http.server, json, os, subprocess, sys, threading
 from playwright.sync_api import sync_playwright
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -86,8 +86,8 @@ def run(rows, today, label, full):
     problems = []
     with sync_playwright() as p:
         b = p.chromium.launch()
-        ctx = b.new_context(timezone_id="Europe/Berlin", locale="de-DE", viewport={"width": 390, "height": 844}, accept_downloads=True)
-        ctx.route("**/js/vendor/supabase.js", lambda r: r.fulfill(body=mock_js, content_type="application/javascript"))
+        ctx = b.new_context(timezone_id="Europe/Berlin", locale="de-DE", viewport={"width": 390, "height": 844})
+        ctx.route("**/js/vendor/supabase.js*", lambda r: r.fulfill(body=mock_js, content_type="application/javascript"))
         ctx.route(lambda u: not u.startswith(base) and not u.startswith("data:") and not u.startswith("blob:"), lambda r: r.abort())
         ctx.add_init_script("window.__FIXTURE__ = " + json.dumps(rows) + ";")
         page = ctx.new_page()
@@ -210,6 +210,7 @@ def run(rows, today, label, full):
         # 7. Es gibt keinen Backup-Knopf mehr (die Sicherung läuft nicht über die Seite)
         check("Kopfzeile hat keinen Backup-Knopf mehr", page.locator("#btn-export, [aria-label*='Backup'], [title*='Backup']").count() == 0)
         check("Kopfzeile hat noch Darstellung, Claude und Abmelden", all(page.locator(s).count() == 1 for s in ("#btn-theme", "#btn-claude", "#btn-logout")))
+        check("Alle Knöpfe der Kopfzeile zeigen ein Symbol", page.evaluate("[...document.querySelectorAll('.tools button')].every(b=>b.querySelector('svg'))"))
 
         # 8. Sitzung bleibt nach Neuladen, Abmelden sperrt wieder
         page.reload(); page.wait_for_selector("#gate", state="hidden", timeout=8000)
@@ -227,6 +228,10 @@ def run(rows, today, label, full):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("--echt")
     a = ap.parse_args()
+    # Versionsstempel in index.html müssen zu den Dateien passen (sonst mischt der Browser nach einem Update alt und neu)
+    print("\n=== Versionsstempel ===")
+    st = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "stempel.py"), "--pruefen"], capture_output=True, text=True)
+    check("Versionsstempel in index.html sind aktuell (sonst: python3 tools/stempel.py)", st.returncode == 0, st.stdout.strip())
     rows, today = synthetic()
     run(rows, today, "erfundene Testdaten", full=False)
     if a.echt:

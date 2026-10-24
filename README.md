@@ -34,11 +34,17 @@ js/
   vendor/supabase.js  Supabase-Bibliothek (supabase-js, MIT), Version in VERSION.txt
 supabase/migrations/  Datenbankschema, Zugriffsregeln, Registrierungssperre, Funktion log_meal (Mahlzeit von außen eintragen)
 tests/                Browser-Tests mit nachgebautem Supabase
+tools/stempel.py      Versionsstempel (?v=…) an den Skript- und Stildateien in index.html
 docs/AUFBAU.md        Ausführliche Beschreibung (Datenmodell, Datenfluss, Entscheidungen)
 ```
 
 Die Skripte sind bewusst klassische Skripte ohne Module: sie teilen sich einen gemeinsamen Gültigkeitsbereich und werden in der
 Reihenfolge der Nummern geladen. Details dazu in [docs/AUFBAU.md](docs/AUFBAU.md).
+
+**Vor jedem Commit, der `js/`, `css/` oder `index.html` ändert:** `python3 tools/stempel.py` ausführen. GitHub Pages lässt Dateien bis
+zu zehn Minuten im Browser zwischenspeichern; ohne Stempel kann der Browser nach einem Update die neue Seite mit einer alten
+Skriptdatei mischen (dann fehlen zum Beispiel Symbole). Der Stempel ist die Prüfsumme der Datei und ändert die Adresse nur, wenn
+sich die Datei ändert. `tests/run_tests.py` schlägt fehl, wenn ein Stempel veraltet ist.
 
 ## Zugriff
 

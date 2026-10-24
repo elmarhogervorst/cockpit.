@@ -170,6 +170,10 @@ Stärke des Schutzes hängt am Passwort. Sicherungskopien enthalten persönliche
 - **Backup:** Die Seite hat keinen Backup-Knopf. Der Free-Tarif von Supabase hat keine automatischen Backups. Kopien einzelner
   Dokumente legt bei Bedarf Claude in der Datenbank an (Schema `private`, nicht über die API erreichbar); eine vollständige
   Sicherung der Tabelle `docs` geht über das Supabase-Dashboard. Sicherungsdateien gehören nicht ins Repo.
+- **Versionsstempel:** GitHub Pages lässt Dateien bis zu zehn Minuten im Browser zwischenspeichern. Damit nach einem Update nicht
+  die neue `index.html` mit einer alten Skriptdatei zusammentrifft (Folge: Symbole fehlen, Teile der Seite sind tot), trägt jede
+  lokale Skript- und Stildatei in `index.html` die Prüfsumme ihres Inhalts (`?v=…`). Vor jedem Commit `python3 tools/stempel.py`
+  ausführen; `tests/run_tests.py` prüft das.
 - **Pausierung:** Free-Projekte ohne Aktivität werden nach etwa einer Woche pausiert und im Dashboard wieder gestartet.
 - **Schema ändern:** neue Datei in `supabase/migrations/` anlegen (fortlaufende Nummer) und im SQL-Editor ausführen; die Dateien
   sind das Protokoll, wie die Datenbank entstanden ist.
