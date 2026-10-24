@@ -154,7 +154,7 @@ VIEWS.nutrition=function(){
           +planTile('Kohlenhydrate','t-card','f-blue',tg.carbs,'g')
           +planTile('Fett','t-card','f-ink',tg.fat,'g')
         +'</div><p class="tg-src">'+(tg.note?esc(tg.note)+'<br>':'')+'Essen trägst du erst an diesem Tag ein.</p>'
-        :'<div class="empty np" id="np-empty" role="status"><b>Noch keine Nährwerte geplant</b></div>')
+        :'<div class="empty np ov-np" id="np-empty" role="status"><b>Noch keine Nährwerte geplant</b></div>')
       :(tg.set?'':'<div class="empty np ov-np" id="np-empty" role="status"><b>Noch keine Nährwerte geplant</b></div>')
         +'<div class="tiles compact">'
         +nutTile('Kalorien gegessen','t-panel','',tot.kcal,tg.kcal,'kcal')

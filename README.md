@@ -28,8 +28,8 @@ js/
   09-training-heute.js  Training: heute
   10-training-plan.js   Training: Plan und Vorlagen
   11-uebungsbibliothek.js  Training: Übungen
-  12-wissen-daten.js  Reiter Wissen: Deine Daten und Gewichtsverlauf (nur Anzeige)
-  13-wissen-sammlung.js  Reiter Wissen: Regelwerk von Claude, nur lesen
+  12-wissen-daten.js  Reiter Wissen: Deine Daten (aktuelles Gewicht aus dem Check-in) und Gewichtsverlauf, nur Anzeige
+  13-wissen-sammlung.js  Reiter Wissen: Regelwerk von Claude als ein- und ausklappbare Blöcke, nur lesen
   14-start.js         Start
   vendor/supabase.js  Supabase-Bibliothek (supabase-js, MIT), Version in VERSION.txt
 supabase/migrations/  Datenbankschema, Zugriffsregeln, Registrierungssperre, Funktion log_meal (Mahlzeit von außen eintragen)

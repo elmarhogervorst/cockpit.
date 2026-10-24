@@ -25,7 +25,7 @@ def synthetic():
         return {"day": dow[d.weekday()], "kind": kind, "name": name, "exercises": exercises, "presetId": None, "source": "own", "updatedAt": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")}
     bench = {"exerciseId": "bank", "name": "Bankdrücken", "sets": sets(60, 8), "timed": False}
     rows = [
-        {"collection": "profile", "id": "main", "data": {"sex": "male", "age": 30, "height": 180, "weight": 80, "startWeight": 78, "goalWeight": 85, "goal": "build", "trainingNotes": "Testnotiz", "updatedAt": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")}},
+        {"collection": "profile", "id": "main", "data": {"sex": "male", "age": 30, "height": 180, "startWeight": 78, "goalWeight": 85, "goal": "build", "updatedAt": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")}},
         {"collection": "targets", "id": "main", "data": {"waterGoalMl": 3000}},
         ex("bank", "Bankdrücken", "Brust"), ex("rudern", "Rudern", "Rücken"), ex("kniebeuge", "Kniebeuge", "Beine"),
         {"collection": "presets", "id": "push", "data": {"name": "Push", "order": 1, "exercises": [bench]}},
@@ -35,16 +35,17 @@ def synthetic():
             {"id": "m9f78c1bdeb", "name": "Kartoffeln mit Hähnchen", "at": "2026-10-23T21:14:43.614Z", "kcal": 394, "protein": 39, "carbs": 50, "fat": 3.8,
              "ingredients": [{"id": "i45c2a0487", "name": "Kartoffeln, 300 g", "kcal": 230, "protein": 6, "carbs": 50, "fat": 0.3},
                              {"id": "ia9b0464f7", "name": "Hähnchen, 150 g", "kcal": 164, "protein": 33, "carbs": 0, "fat": 3.5}]}]}},
-        {"collection": "days", "id": iso(today - dt.timedelta(days=1)), "data": {"date": iso(today - dt.timedelta(days=1)), "plan": plan(today - dt.timedelta(days=1), "rest", "Ruhetag", []), "waterMl": 1500}},
+        {"collection": "days", "id": iso(today - dt.timedelta(days=1)), "data": {"date": iso(today - dt.timedelta(days=1)), "plan": plan(today - dt.timedelta(days=1), "rest", "Ruhetag", []), "waterMl": 1500, "weight": 82.5}},
         {"collection": "days", "id": iso(today + dt.timedelta(days=1)), "data": {"date": iso(today + dt.timedelta(days=1)), "plan": None}},
         {"collection": "wissen", "id": "vorlieben", "data": {"title": "Vorlieben", "intro": "Test", "order": 1, "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
             {"group": "Ernährung", "key": "ernaehrung.alltagsfaktor", "kind": "number", "label": "Alltagsfaktor", "step": 0.025, "value": 1.375},
             {"group": "Training", "key": "training.sport_fest", "kind": "table", "label": "Sport", "editRows": True, "value": [{"name": "Tennis", "tag": "do", "von": "16:00", "bis": "17:00", "sicher": "fest", "hinweis": ""}],
              "columns": [{"k": "name", "kind": "text", "label": "Sport"}, {"k": "tag", "kind": "select", "label": "Tag", "options": [["do", "Donnerstag"]]}, {"k": "von", "kind": "time", "label": "von"}, {"k": "bis", "kind": "time", "label": "bis"}, {"k": "sicher", "kind": "select", "label": "Sicherheit", "options": [["fest", "fest"]]}, {"k": "hinweis", "kind": "text", "label": "Hinweis"}]}]}},
         {"collection": "wissen", "id": "regeln", "data": {"title": "Regeln", "intro": "Test", "order": 2, "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
-            {"group": "Training: Wochenaufbau", "key": "training.aufteilung", "kind": "text", "label": "Aufteilung der Einheiten", "value": "Bei 3 Einheiten Ganzkörper."}]}},
+            {"group": "Training: Wochenaufbau", "key": "training.aufteilung", "kind": "text", "label": "Aufteilung der Einheiten", "value": "Bei 3 Einheiten Ganzkörper."},
+            {"group": "Training: Volumen und Intensität", "key": "training.muskelversagen", "kind": "list", "label": "Nähe zum Muskelversagen", "value": ["Meist 1 bis 3 Wiederholungen Reserve.", "Letzter Satz darf näher ans Versagen."]}]}},
         {"collection": "ki", "id": "systemprompt", "data": {"title": "Claude-Anweisung", "updatedAt": "2026-01-01T00:00:00.000Z", "text": "Testanweisung: Lies zuerst wissen/datenmodell."}},
-        {"collection": "wissen", "id": "datenmodell", "data": {"title": "Datenmodell", "intro": "Test", "order": 4, "fold": True, "layout": "model", "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
+        {"collection": "wissen", "id": "datenmodell", "data": {"title": "Datenmodell", "intro": "Test", "order": 4, "layout": "model", "updatedAt": "2026-01-01T00:00:00.000Z", "items": [
             {"group": "Profil", "key": "profile.age", "kind": "model", "label": "Alter", "typ": "zahl", "pflicht": True}]}},
     ]
     return rows, iso(today)
@@ -130,6 +131,15 @@ def run(rows, today, label, full):
             if tg.count():
                 tg.click(); page.wait_for_timeout(300)
             check("Zutaten lassen sich aufklappen", "Kartoffeln, 300 g" in page.inner_text("#view") and "Hähnchen, 150 g" in page.inner_text("#view"))
+            # Der Hinweis „Noch keine Nährwerte geplant“ ist an einem künftigen Tag so groß wie an einem vergangenen Tag ohne Plan
+            pad = "(()=>{const e=document.getElementById('np-empty');if(!e)return null;const s=getComputedStyle(e);return s.paddingTop+'/'+s.paddingBottom;})()"
+            page.locator('[data-act="nut-next"]').click(); page.wait_for_timeout(250)
+            pad_future = page.evaluate(pad)
+            page.locator('[data-act="nut-today"]').click(); page.wait_for_timeout(150)
+            page.locator('[data-act="nut-prev"]').click(); page.wait_for_timeout(250)
+            pad_past = page.evaluate(pad)
+            page.locator('[data-act="nut-today"]').click(); page.wait_for_timeout(150)
+            check("Hinweis ohne Nährwerte ist in der Zukunft so groß wie an anderen Tagen", pad_future is not None and pad_future == pad_past, f"{pad_future} vs {pad_past}")
 
         # 3. Schreiben: Wasser (days/<heute>)
         page.click('#nav button[data-tab="overview"]'); page.wait_for_timeout(200)
@@ -145,9 +155,26 @@ def run(rows, today, label, full):
         # 4. Wissen ist nur lesbar, Datenmodell und Startgewicht werden nicht gezeigt
         if not full:
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)
+            check("Vorlieben, Regeln und Auswertung sind ein Block je Dokument und zu Beginn zugeklappt",
+                  page.locator("#view details.wz").count() == 2 and page.locator("#view details.wz[open]").count() == 0)
+            check("Zugeklappt steht der Inhalt nicht auf der Seite", "Alltagsfaktor" not in page.inner_text("#view") and "Bei 3 Einheiten" not in page.inner_text("#view"))
+            page.locator('#view details.wz[data-wz="regeln"] > summary').click(); page.wait_for_timeout(200)
+            check("Ein Klick klappt den Block auf", page.locator('#view details.wz[data-wz="regeln"][open]').count() == 1 and "Bei 3 Einheiten Ganzkörper." in page.inner_text("#view"))
+            page.click('#nav button[data-tab="nutrition"]'); page.wait_for_timeout(200)
+            page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)
+            check("Aufgeklappter Block bleibt beim Reiterwechsel offen", page.locator('#view details.wz[data-wz="regeln"][open]').count() == 1)
+            page.locator('#view details.wz[data-wz="regeln"] > summary').click(); page.wait_for_timeout(200)
+            check("Ein zweiter Klick klappt ihn wieder zu", page.locator('#view details.wz[open]').count() == 0)
+            page.evaluate("document.querySelectorAll('#view details.wz').forEach(d=>{d.open=true;})"); page.wait_for_timeout(200)
             txt = page.inner_text("#view")
             check("Wissen zeigt den Vorlieben-Wert", "Alltagsfaktor" in txt and "1,375" in txt, txt[:200].replace("\n", " "))
             check("Wissen zeigt den Regeltext", "Bei 3 Einheiten Ganzkörper." in txt)
+            check("Gruppen werden in Hauptüberschrift und Untergruppe gegliedert",
+                  page.locator('#view details.wz[data-wz="regeln"] .wz-mh').count() == 1 and page.locator('#view details.wz[data-wz="regeln"] .wz-subgrp').count() == 2
+                  and "wochenaufbau" in txt.lower() and "volumen und intensität" in txt.lower() and "training: wochenaufbau" not in txt.lower(),
+                  page.locator('#view details.wz[data-wz="regeln"]').inner_text()[:200].replace("\n", " "))
+            check("Listen werden als Aufzählung gezeigt", page.locator("#view .wz-list li").count() == 2 and "Meist 1 bis 3 Wiederholungen Reserve." in txt)
+            check("Aktuelles Gewicht kommt aus dem Daily Check-in (82,5 kg)", "Aktuelles Gewicht" in txt and "82,5" in txt and "80" not in page.locator("#view .wz-item", has_text="Aktuelles Gewicht").first.inner_text(), txt[:300].replace("\n", " "))
             check("Wissen hat keine Eingabefelder und keinen Speichern-Knopf", page.locator("#view input, #view textarea, #view select, #view [data-act^='wz-'], #view [data-act^='pf-']").count() == 0)
             check("Datenmodell wird nicht angezeigt", "Datenmodell" not in txt)
             check("Startgewicht gibt es nicht mehr", "Startgewicht" not in txt)

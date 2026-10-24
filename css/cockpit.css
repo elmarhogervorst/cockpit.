@@ -554,19 +554,17 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 /* Wissen */
 .wz-intro{max-width:66ch;color:var(--ink-2);font-size:15px;line-height:1.5;margin:-4px 0 20px}
 .wz{margin-top:16px;scroll-margin-top:12px}
-.wz-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 14px}
 .wz-meta{font-size:13px;color:var(--ink-2)}
 .wz-sub{max-width:66ch;color:var(--ink-2);font-size:14px;line-height:1.5;margin:8px 0 0}
-.wz-grp{border-top:1px solid var(--line);margin-top:20px;padding-top:18px}
-.wz-grp>.kicker{margin-bottom:14px}
+.wz-main{border-top:1px solid var(--line);margin-top:20px;padding-top:18px}
+.wz-mh{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.02em;line-height:1.15;margin:0 0 12px}
+.wz-subgrp{background:var(--soft);border-radius:16px;padding:14px 16px;margin-top:10px}
+.wz-subgrp:first-of-type{margin-top:0}
+.wz-subgrp>.kicker{margin-bottom:10px}
 .wz-wide{grid-column:1/-1}
 .wz-unit{font-size:13px;color:var(--ink-2);min-width:0}
 .wz-hint{font-size:13px;color:var(--ink-2);line-height:1.45;margin:8px 0 0;max-width:66ch}
-.wz-tbl{border-collapse:collapse;width:auto;min-width:min(100%,360px)}
-.wz-tbl th{font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:0 10px 8px 0;white-space:nowrap}
-.wz-tbl td{padding:4px 10px 4px 0;vertical-align:middle}
-.wz-u{text-transform:none;letter-spacing:0}
-.wz-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;border-top:1px solid var(--line);padding-top:18px}
+.wz-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;border-top:1px solid var(--line);margin-top:20px;padding-top:18px}
 .wz-when{font-size:13px;color:var(--ink-3);margin-left:auto}
 details.wz>summary{list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;cursor:pointer;padding-right:30px;position:relative;border-radius:8px}
 details.wz>summary::-webkit-details-marker{display:none}
@@ -577,13 +575,28 @@ details.wz[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
 .wz-items{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
 .wz-item{padding:11px 0;border-top:1px solid var(--line)}
 .wz-item:first-child{border-top:0;padding-top:0}
-.wz-line{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 16px}
-.wz-k{font-weight:500}
-.wz-v{white-space:nowrap}
+.wz-item:last-child{padding-bottom:0}
+.wz-subgrp .wz-item{border-top-color:color-mix(in srgb,var(--ink) 12%,transparent)}
+.wz-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.wz-list li{position:relative;padding-left:18px;line-height:1.5;max-width:66ch}
+.wz-list li::before{content:"";position:absolute;left:2px;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.wz-line{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:2px 16px}
+.wz-k{font-weight:500;min-width:0}
+.wz-v{white-space:nowrap;text-align:right}
 .wz-v b{font-weight:600}
 .wz-p{margin:6px 0 0;max-width:66ch;line-height:1.55;color:var(--ink)}
-.wz-item .tablewrap{margin-top:8px;max-width:100%;overflow-x:auto}
 .wz-item .wz-hint{margin-top:6px}
+/* Tabellen als Karten je Zeile */
+.wz-rows{display:grid;gap:8px;margin-top:10px}
+.wz-row{background:var(--card);border-radius:12px;padding:10px 12px;min-width:0}
+.wz-row2{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:2px 14px}
+.wz-rt{font-weight:600;min-width:0}
+.wz-dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(76px,1fr));gap:8px 10px;margin:8px 0 0}
+.wz-dl>div{min-width:0}
+.wz-dw{grid-column:1/-1}
+.wz-dl dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);margin:0 0 2px}
+.wz-dl dd{margin:0;font-weight:500;overflow-wrap:break-word}
+@media (min-width:700px){.wz-dl{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
 /* Claude-Anweisung (Fenster aus der Kopfzeile) */
 .claude-sub{color:var(--ink-2);font-size:14px;margin:8px 0 14px}
 .claude-text{margin:0;max-height:min(52vh,420px);overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--mono);font-size:13px;line-height:1.55;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card)}

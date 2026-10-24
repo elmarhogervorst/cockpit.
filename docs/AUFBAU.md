@@ -93,7 +93,7 @@ Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"K
 
 | Sammlung    | Dokument-IDs         | Inhalt (Felder)                                                                                                   |
 |-------------|----------------------|-------------------------------------------------------------------------------------------------------------------|
-| `profile`   | `main`               | Geschlecht, Alter, Größe, Gewicht, Start- und Zielgewicht, Ziel, Freitext-Hinweise zum Training                    |
+| `profile`   | `main`               | Geschlecht, Alter, Größe, Zielgewicht, Ziel (das aktuelle Gewicht steht hier nicht, es kommt aus `days`)         |
 | `targets`   | `main`               | Tagesziele, z. B. Wasser (`waterGoalMl`)                                                                          |
 | `exercises` | beliebig             | Übungen: Name, Muskelgruppe, Beschreibung, zeitbasiert ja/nein                                                    |
 | `presets`   | beliebig             | Trainingsvorlagen: Name, Reihenfolge, Übungen mit Sätzen                                                          |
@@ -107,15 +107,19 @@ historisch „Körper“).
 ### Reiter „Wissen“
 
 Das feste Regelwerk, nach dem Claude plant und auswertet: Vorlieben, Regeln, Auswertung, dazu eine Beschreibung des
-Datenmodells. Jedes Dokument hat `title`, `intro`, `order`, `items[]` (Felder mit `kind`: `number`, `text`, `bool`, `table`)
-und optional `fold`/`layout`. Die Oberfläche zeichnet sie generisch und **nur lesend**: Sie bietet keine Eingabefelder und
+Datenmodells. Jedes Dokument hat `title`, `intro`, `order`, `items[]` (Felder mit `kind`: `number`, `text`, `bool`, `list`,
+`table`) und optional `layout`. Bei `list` ist `value` eine Liste von Sätzen. Das Feld `group` darf `Hauptgruppe: Untergruppe`
+heißen; die Seite macht daraus eine Überschrift mit einem Kasten je Untergruppe, Tabellen erscheinen als Karten je Zeile.
+Jedes Dokument ist ein Block, der sich ein- und ausklappen lässt (zu Beginn zu, die Wahl bleibt beim Reiterwechsel erhalten).
+Die Oberfläche zeichnet sie generisch und **nur lesend**: Sie bietet keine Eingabefelder und
 schreibt nie in `wissen`. Geändert wird es allein von Claude (per SQL), auf Wunsch im Chat. Das Dokument `datenmodell`
 (`layout: model`) ist für Claude gedacht und wird auf der Seite nicht angezeigt. Die Sperre gilt nur in der Oberfläche, nicht
 in der Datenbank (der angemeldete Eigentümer dürfte technisch schreiben).
 
 Der Reiter zeigt außerdem „Deine Daten“ (Ziel, Geschlecht, Alter, Größe, aktuelles und Zielgewicht aus `profile/main`) und den
-Gewichtsverlauf, ebenfalls nur lesend. Das Profil ändert allein Claude auf Wunsch; das aktuelle Gewicht (`profile.weight`) trägt die
-Seite selbst ein, wenn du im Daily Check-in dein heutiges Gewicht speicherst.
+Gewichtsverlauf, ebenfalls nur lesend. Das Profil ändert allein Claude auf Wunsch. Das aktuelle Gewicht wird nirgends
+gespeichert: Es ist der jüngste Wert `days/<Datum>.weight` aus dem Daily Check-in und bleibt leer, solange noch nie
+gewogen wurde.
 
 ### Claude-Anweisung
 

@@ -589,7 +589,6 @@ BIND['ci-weight']=t=>{
   const date=ciDate(),d=dayRef(date),v=toNum(t.value);
   d.weight=v!=null&&v>20&&v<400?v:null;t.value=inputNum(d.weight);
   saveDayLater(date,'weight',300);
-  if(d.weight&&date===TODAY()&&S.profile){S.profile.weight=d.weight;patchDoc('profile/main',{weight:d.weight});}
 };
 ACT.finish=()=>{
   const date=UI.trainDate||TODAY();if(isSkipped(date))return;

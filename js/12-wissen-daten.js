@@ -1,22 +1,26 @@
 'use strict';
 /* Reiter Wissen: Deine Daten und Körpergewicht (nur Anzeige) */
 /* ---------- Körper ----------
-   Das Profil (profile/main) wird hier nur gezeigt. Ändern kann es allein Claude auf Wunsch im Chat; das aktuelle Gewicht trägt die
-   Seite selbst aus dem Daily Check-in ein (09-training-heute.js). */
+   Das Profil (profile/main) wird hier nur gezeigt. Ändern kann es allein Claude auf Wunsch im Chat. Das aktuelle Gewicht steht nicht
+   im Profil: Es ist der jüngste Wert aus dem Daily Check-in (days/<Datum>.weight) und bleibt leer, solange noch nie gewogen wurde. */
 const GOAL_NAME={build:'Muskelaufbau',cut:'Definition (Abnehmen)',hold:'Gewicht halten'};
 const SEX_NAME={male:'Männlich',female:'Weiblich'};
 function profRow(label,val,unit){
   const has=val!=null&&val!=='';
   return '<div class="wz-item"><div class="wz-line"><span class="wz-k">'+esc(label)+'</span><span class="wz-v">'+(has?'<b>'+esc(val)+'</b>'+(unit?' <span class="wz-unit">'+esc(unit)+'</span>':''):'–')+'</span></div></div>';
 }
+function currentWeight(){
+  const s=weightSeries();
+  return s.length?s[s.length-1].w:null;
+}
 function profileCard(){
-  const p=S.profile||{};
+  const p=S.profile||{},cw=currentWeight();
   return '<section class="card"><div class="kicker">Profil</div><h2 class="h2" style="margin:4px 0 14px">Deine Daten</h2><div class="wz-items">'
     +profRow('Ziel',GOAL_NAME[p.goal]||p.goal)
     +profRow('Geschlecht',SEX_NAME[p.sex]||p.sex)
     +profRow('Alter',p.age,'Jahre')
     +profRow('Größe',p.height>0?inputNum(p.height):null,'cm')
-    +profRow('Aktuelles Gewicht',p.weight>0?inputNum(p.weight):null,'kg')
+    +profRow('Aktuelles Gewicht',cw!=null?inputNum(cw):null,'kg')
     +profRow('Zielgewicht',p.goalWeight>0?inputNum(p.goalWeight):null,'kg')
     +'</div></section>';
 }
