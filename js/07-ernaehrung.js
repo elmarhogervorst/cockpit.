@@ -153,15 +153,16 @@ VIEWS.nutrition=function(){
           +planTile('Protein','t-card','f-accent',tg.protein,'g')
           +planTile('Kohlenhydrate','t-card','f-blue',tg.carbs,'g')
           +planTile('Fett','t-card','f-ink',tg.fat,'g')
-        +'</div><p class="tg-src">'+(tg.note?'Geplante Ziele für diesen Tag: '+esc(tg.note):'Geplante Ziele für diesen Tag.')+'<br>Essen trägst du erst an diesem Tag ein.</p>'
-        :'<div class="empty np" id="np-empty" role="status"><b>Noch nichts geplant</b>Für diesen Tag gibt es noch kein Kalorien- und Makroziel.</div>')
-      :'<div class="tiles compact">'
+        +'</div><p class="tg-src">'+(tg.note?esc(tg.note)+'<br>':'')+'Essen trägst du erst an diesem Tag ein.</p>'
+        :'<div class="empty np" id="np-empty" role="status"><b>Noch keine Nährwerte geplant</b></div>')
+      :(tg.set?'':'<div class="empty np ov-np" id="np-empty" role="status"><b>Noch keine Nährwerte geplant</b></div>')
+        +'<div class="tiles compact">'
         +nutTile('Kalorien gegessen','t-panel','',tot.kcal,tg.kcal,'kcal')
         +nutTile('Protein','t-card','f-accent',tot.protein,tg.protein,'g')
         +nutTile('Kohlenhydrate','t-card','f-blue',tot.carbs,tg.carbs,'g')
         +nutTile('Fett','t-card','f-ink',tot.fat,tg.fat,'g')
       +'</div>'
-      +(()=>{const c=tg.set?(tg.note?'Ziele für diesen Tag: '+esc(tg.note):'Ziele für diesen Tag.'):'Für diesen Tag ist noch kein Ziel geplant.';return c?'<p class="tg-src">'+c+'</p>':'';})())
+      +(tg.set&&tg.note?'<p class="tg-src">'+esc(tg.note)+'</p>':''))
     +(future?'':flagHtml(date))
     +(future?'':'<section class="card meal-card" id="meal-card" style="margin-bottom:16px"><div class="kicker">Neuer Eintrag</div><h2 class="h2" style="margin:4px 0 16px">Essen eintragen</h2>'
       +'<form id="meal-form" class="meal-form" novalidate>'

@@ -76,7 +76,7 @@ VIEWS.overview=function(){
         +remTile('Kohlenhydrate','t-blue',tot.carbs,tg.carbs,'g')
         +remTile('Fett','t-panel',tot.fat,tg.fat,'g')
       +'</div>'
-      :'<div class="empty np ov-np" id="ov-np" role="status"><b>Noch nichts geplant</b>Jetzt Kalorien planen.'
+      :'<div class="empty np ov-np" id="ov-np" role="status"><b>Noch keine Nährwerte geplant</b>'
         +(tot.kcal>0?'<span class="np-eaten">Bisher eingetragen: '+f0(tot.kcal)+' kcal · P '+f0(tot.protein)+' g · KH '+f0(tot.carbs)+' g · F '+f0(tot.fat)+' g</span>':'')+'</div>')
     +'<div class="grid2"><div class="stack"><section class="card">'+train+'</section><section class="card">'+week+'</section></div>'+dailyCheckinHtml(UI.ciDate||date)+'</div>'
     +'<div class="grid2 row-b">'+waterHtml()+activitiesHtml()+'</div>';
