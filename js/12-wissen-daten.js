@@ -55,7 +55,7 @@ function weightCard(){
   const pts=weightSeries(),goal=(S.profile&&S.profile.goalWeight)||0;
   let inner;
   if(!pts.length){
-    inner='<div class="empty"><b>Noch keine Gewichtsdaten</b>Trage dein nüchternes Gewicht im Daily Check-in auf der Übersicht ein. Ab zwei Messungen erscheint hier der Verlauf.</div>';
+    inner='<div class="empty"><b>Noch keine Gewichtsdaten</b>Trage dein nüchternes Gewicht im Daily Check-in oben ein. Ab zwei Messungen erscheint hier der Verlauf.</div>';
   }else{
     const last=pts[pts.length-1];
     const ref=pts.filter(p=>p.date<=addDays(last.date,-7)).pop();
@@ -71,12 +71,15 @@ function weightCard(){
 }
 VIEWS.body=function(){
   return '<div class="pagehead"><div class="kicker">'+esc(longDate(TODAY()))+'</div><h1 class="title">Wissen</h1></div>'
-    +'<p class="wz-intro">Oben stehen deine Eckdaten und dein Gewichtsverlauf. Darunter steht das feste Regelwerk, nach dem Claude plant und auswertet: deine Vorlieben und die Regeln für Training und Ernährung. Das kannst du hier nachlesen. Geändert wird es nur von Claude, wenn du es im Chat willst. Dein Gewicht trägst du im Daily Check-in auf der Übersicht ein.</p>'
-    +'<div class="grid2 even">'+profileCard()+weightCard()+'</div>'
+    +'<p class="wz-intro">Oben stehen deine Eckdaten. Darunter steht das feste Regelwerk, nach dem Claude plant und auswertet: deine Vorlieben und die Regeln für Training und Ernährung. Das kannst du hier nachlesen. Geändert wird es nur von Claude, wenn du es im Chat willst. Dein Gewicht trägst du im Daily Check-in auf der Übersicht ein, dort steht auch der Gewichtsverlauf.</p>'
+    +'<div class="grid2 even">'+profileCard()+'</div>'
     +wissenHtml();
 };
 AFTER.body=function(){
   $$('details[data-wz]').forEach(d=>d.addEventListener('toggle',()=>{UI.wOpen[d.dataset.wz]=d.open;}));
+};
+/* Kurzinfo beim Berühren eines Punkts im Gewichtsverlauf (der Verlauf steht auf der Übersicht) */
+AFTER.overview=function(){
   const w=$('.chartwrap');if(!w)return;
   const tip=$('.tip',w);
   w.addEventListener('pointerover',e=>{

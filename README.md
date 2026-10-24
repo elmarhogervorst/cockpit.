@@ -28,7 +28,7 @@ js/
   09-training-heute.js  Training: heute
   10-training-plan.js   Training: Plan und Vorlagen
   11-uebungsbibliothek.js  Training: Übungen
-  12-wissen-daten.js  Reiter Wissen: Deine Daten (aktuelles Gewicht aus dem Check-in) und Gewichtsverlauf, nur Anzeige
+  12-wissen-daten.js  Reiter Wissen: Deine Daten (aktuelles Gewicht aus dem Check-in), nur Anzeige; weightCard() für den Verlauf auf der Übersicht
   13-wissen-sammlung.js  Reiter Wissen: Regelwerk von Claude als ein- und ausklappbare Blöcke, nur lesen
   14-start.js         Start
   vendor/supabase.js  Supabase-Bibliothek (supabase-js, MIT), Version in VERSION.txt

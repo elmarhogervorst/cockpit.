@@ -116,8 +116,8 @@ schreibt nie in `wissen`. Geändert wird es allein von Claude (per SQL), auf Wun
 (`layout: model`) ist für Claude gedacht und wird auf der Seite nicht angezeigt. Die Sperre gilt nur in der Oberfläche, nicht
 in der Datenbank (der angemeldete Eigentümer dürfte technisch schreiben).
 
-Der Reiter zeigt außerdem „Deine Daten“ (Ziel, Geschlecht, Alter, Größe, aktuelles und Zielgewicht aus `profile/main`) und den
-Gewichtsverlauf, ebenfalls nur lesend. Das Profil ändert allein Claude auf Wunsch. Das aktuelle Gewicht wird nirgends
+Der Reiter zeigt außerdem „Deine Daten“ (Ziel, Geschlecht, Alter, Größe, aktuelles und Zielgewicht aus `profile/main`), nur
+lesend. Der Gewichtsverlauf steht auf der Übersicht, unter Wasser und Aktivitäten. Das Profil ändert allein Claude auf Wunsch. Das aktuelle Gewicht wird nirgends
 gespeichert: Es ist der jüngste Wert `days/<Datum>.weight` aus dem Daily Check-in und bleibt leer, solange noch nie
 gewogen wurde.
 
