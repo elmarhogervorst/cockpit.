@@ -1,7 +1,7 @@
 'use strict';
 /* Reiter Wissen: Dokumente aus der Sammlung wissen, nur zum Lesen */
 /* ---------- Wissen ----------
-   Zentrale Sammlung wissen/<id>: Vorlieben, Regeln, Auswertung, Datenmodell. Jedes Dokument beschreibt sich selbst:
+   Zentrale Sammlung wissen/<id>: Vorlieben, Regeln, Datenmodell. Jedes Dokument beschreibt sich selbst:
    {title,intro,order,layout?,updatedAt,items:[{key,group,label,kind,value,unit?,hint?,columns?}]}.
    kind: number, text, bool, list (value = Liste von Sätzen) oder table (Spalten in columns, Zeilen in value).
    group darf "Hauptgruppe: Untergruppe" heißen; die Seite gliedert danach in eine Überschrift und darunter Felder je Untergruppe.
@@ -87,6 +87,6 @@ function wissenHtml(){
   if(UI.wErr)return '<div class="empty wz"><b>Wissen konnte nicht geladen werden</b>Lade die Seite neu. Wenn es bleibt, melde dich ab und wieder an.</div>';
   if(!LOADED.wissen)return '<div class="empty wz"><b>Lade Wissen</b>Einen Moment.</div>';
   const docs=wzDocs();
-  if(!docs.length)return '<div class="empty wz"><b>Noch kein Wissen angelegt</b>Hier erscheinen deine Vorlieben, die Regeln für Training und Ernährung und die Auswertung. Bitte Claude im Chat, sie anzulegen.</div>';
+  if(!docs.length)return '<div class="empty wz"><b>Noch kein Wissen angelegt</b>Hier erscheinen deine Vorlieben und die Regeln für Training und Ernährung. Bitte Claude im Chat, sie anzulegen.</div>';
   return docs.map(wzSection).join('');
 }

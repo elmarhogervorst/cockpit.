@@ -155,7 +155,7 @@ def run(rows, today, label, full):
         # 4. Wissen ist nur lesbar, Datenmodell und Startgewicht werden nicht gezeigt
         if not full:
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)
-            check("Vorlieben, Regeln und Auswertung sind ein Block je Dokument und zu Beginn zugeklappt",
+            check("Vorlieben und Regeln sind ein Block je Dokument und zu Beginn zugeklappt",
                   page.locator("#view details.wz").count() == 2 and page.locator("#view details.wz[open]").count() == 0)
             check("Zugeklappt steht der Inhalt nicht auf der Seite", "Alltagsfaktor" not in page.inner_text("#view") and "Bei 3 Einheiten" not in page.inner_text("#view"))
             page.locator('#view details.wz[data-wz="regeln"] > summary').click(); page.wait_for_timeout(200)

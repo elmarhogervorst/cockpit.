@@ -98,7 +98,7 @@ Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"K
 | `exercises` | beliebig             | Übungen: Name, Muskelgruppe, Beschreibung, zeitbasiert ja/nein                                                    |
 | `presets`   | beliebig             | Trainingsvorlagen: Name, Reihenfolge, Übungen mit Sätzen                                                          |
 | `days`      | Datum `JJJJ-MM-TT`   | Ein Tag: Plan, Training (`workout`), Mahlzeiten (`meals`), Aktivitäten, Check-in, Ziele des Tages, Wasser, Gewicht |
-| `wissen`    | `vorlieben`, `regeln`, `auswertung`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
+| `wissen`    | `vorlieben`, `regeln`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
 | `ki`        | `systemprompt`       | Anweisung an Claude (`title`, `text`, `updatedAt`), angezeigt über den Claude-Knopf in der Kopfzeile              |
 
 Reiter in der Oberfläche: Übersicht (`overview`), Training (`training`), Ernährung (`nutrition`) und **Wissen** (Reiter-ID `body`,
@@ -106,7 +106,7 @@ historisch „Körper“).
 
 ### Reiter „Wissen“
 
-Das feste Regelwerk, nach dem Claude plant und auswertet: Vorlieben, Regeln, Auswertung, dazu eine Beschreibung des
+Das feste Regelwerk, nach dem Claude plant und auswertet: Vorlieben, Regeln, dazu eine Beschreibung des
 Datenmodells. Jedes Dokument hat `title`, `intro`, `order`, `items[]` (Felder mit `kind`: `number`, `text`, `bool`, `list`,
 `table`) und optional `layout`. Bei `list` ist `value` eine Liste von Sätzen. Das Feld `group` darf `Hauptgruppe: Untergruppe`
 heißen; die Seite macht daraus eine Überschrift mit einem Kasten je Untergruppe, Tabellen erscheinen als Karten je Zeile.

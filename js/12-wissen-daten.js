@@ -71,7 +71,7 @@ function weightCard(){
 }
 VIEWS.body=function(){
   return '<div class="pagehead"><div class="kicker">'+esc(longDate(TODAY()))+'</div><h1 class="title">Wissen</h1></div>'
-    +'<p class="wz-intro">Oben stehen deine Eckdaten und dein Gewichtsverlauf. Darunter steht das feste Regelwerk, nach dem Claude plant und auswertet: deine Vorlieben, die Regeln für Training und Ernährung und die Auswertung. Das kannst du hier nachlesen. Geändert wird es nur von Claude, wenn du es im Chat willst. Dein Gewicht trägst du im Daily Check-in auf der Übersicht ein.</p>'
+    +'<p class="wz-intro">Oben stehen deine Eckdaten und dein Gewichtsverlauf. Darunter steht das feste Regelwerk, nach dem Claude plant und auswertet: deine Vorlieben und die Regeln für Training und Ernährung. Das kannst du hier nachlesen. Geändert wird es nur von Claude, wenn du es im Chat willst. Dein Gewicht trägst du im Daily Check-in auf der Übersicht ein.</p>'
     +'<div class="grid2 even">'+profileCard()+weightCard()+'</div>'
     +wissenHtml();
 };
