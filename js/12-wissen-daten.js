@@ -63,7 +63,7 @@ VIEWS.body=function(){
   const p=profDraft(),FG='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px';
   const left='<section class="card"><div class="kicker">Profil</div><h2 class="h2" style="margin:4px 0 14px">Deine Daten</h2>'
     +'<div style="'+FG+'"><div class="fgroup"><span class="lbl">Geschlecht</span>'+pChips('sex',[['male','Männlich'],['female','Weiblich']],p.sex)+'</div>'
-      +numField('age','Alter','Jahre',p.age,'28')+numField('height','Größe','cm',p.height,'182')+numField('startWeight','Startgewicht','kg',p.startWeight,'82,6')+numField('goalWeight','Zielgewicht','kg',p.goalWeight,'85')+'</div>'
+      +numField('age','Alter','Jahre',p.age,'28')+numField('height','Größe','cm',p.height,'182')+numField('goalWeight','Zielgewicht','kg',p.goalWeight,'85')+'</div>'
     +'<div class="fgroup"><label class="lbl" for="pf-notes">Trainingsvorlieben und Hinweise</label><textarea class="field" id="pf-notes" rows="5" maxlength="1500" data-live="pft" data-k="trainingNotes" placeholder="Zum Beispiel: Ziel Muskelaufbau. Im Alltag viel Sitzen, dazu 2 × Padel pro Woche. Ich möchte 4 Tage pro Woche trainieren, höchstens 60 Minuten, am liebsten Push/Pull/Legs. Sonntag ist immer frei. Schulter macht Probleme.">'+esc(p.trainingNotes||'')+'</textarea></div>'
     +'<div style="border-top:1px solid var(--line);padding-top:18px"><button type="button" class="btn pri" data-act="pf-save">Daten speichern</button></div></section>';
   return '<div class="pagehead"><div class="kicker">'+esc(longDate(TODAY()))+'</div><h1 class="title">Wissen</h1></div>'
