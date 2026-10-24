@@ -45,7 +45,7 @@ const I={
   auto:SVG+'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>',
   copy:SVG+'<rect x="8" y="8" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>',
   out:SVG+'<path d="M10 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4"/><path d="m15 8 4 4-4 4"/><path d="M19 12H9"/></svg>',
-  claude:SVG+'<path d="M11 3.5l1.7 5.3 5.3 1.7-5.3 1.7L11 17.5l-1.7-5.3L4 10.5l5.3-1.7z"/><path d="M18.5 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>'
+  claude:SVG+'<path d="M6 4h8l4 4v12H6z"/><path d="M14 4v4h4"/><path d="M9 12h6M9 15.5h6"/></svg>'
 };
 
 /* ---------- Zustand ---------- */
