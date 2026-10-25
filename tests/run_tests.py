@@ -155,6 +155,20 @@ def run(rows, today, label, full):
         else:
             check("Wasser-Knopf gefunden", False)
 
+        # 3b. Anmerkungen im Daily Check-in: eigener Schlüssel checkin.context (nicht checkin.note der Trainingsnotiz), Zusammenfassung zeigt sie
+        if not full:
+            txt_ctx = "Gestern gefeiert,\nspät ins Bett."
+            check("Daily Check-in hat ein Feld für Anmerkungen", page.locator("#ci-ctx").count() == 1)
+            page.fill("#ci-ctx", txt_ctx); page.wait_for_timeout(1300)
+            got = page.evaluate("(d)=>{const x=window.__MOCK_STORE__.get('days',d);return x&&x.checkin?[x.checkin.context||null,x.checkin.note||null]:null}", today)
+            check("Anmerkungen landen in checkin.context, checkin.note bleibt leer", got == [txt_ctx, None], got)
+            page.locator('#ci-form [data-act="ci-set"][data-k="wellbeing"][data-v="4"]').click(); page.wait_for_timeout(500)
+            check("Anmerkungen bleiben nach dem Neuzeichnen im Feld", page.input_value("#ci-ctx") == txt_ctx)
+            page.click('[data-act="ci-confirm"]'); page.wait_for_timeout(800)
+            summ = page.inner_text("#ci-sum")
+            check("Zusammenfassung zeigt die Anmerkungen", "Anmerkungen" in summ and "Gestern gefeiert," in summ and "spät ins Bett." in summ, summ[:200].replace("\n", " "))
+            page.click('[data-act="ci-edit"]'); page.wait_for_timeout(800)
+
         # 4. Wissen ist nur lesbar, Datenmodell und Startgewicht werden nicht gezeigt
         if not full:
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)

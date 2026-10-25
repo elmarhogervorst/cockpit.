@@ -396,7 +396,7 @@ function choiceRow(key,opts,cur,round){
 }
 /* Datum, auf das sich Check-in-Eingaben beziehen: in der Übersicht das dort gewählte, im Training der gewählte Trainingstag */
 const ciDate=()=>UI.tab==='overview'?(UI.ciDate||TODAY()):(UI.trainDate||TODAY());
-/* Daily Check-in (Übersicht, jeden Tag): Wohlbefinden, Schlaf, Muskelkater, Stress, Körpergewicht.
+/* Daily Check-in (Übersicht, jeden Tag): Wohlbefinden, Schlaf, Muskelkater, Stress, Körpergewicht, Anmerkungen (optional).
    „Bestätigen“ klappt die Karte zu einer Zusammenfassung ein (checkin.confirmedAt), „Bearbeiten“ klappt sie wieder auf. */
 const SEV_LABEL={none:'keiner',light:'leicht',medium:'mittel',strong:'stark'};
 const SLEEPQ={bad:'schlecht',ok:'okay',good:'gut'},STRESSQ={low:'niedrig',mid:'mittel',high:'hoch'};
@@ -407,7 +407,9 @@ function ciSummaryHtml(date){
   const sore=!set.length?'–':act.length?act.map(a=>a+' '+SEV_LABEL[sel[a]]).join(', '):'Keiner';
   const sleep=c.sleepH!=null?f1(c.sleepH)+' Std'+(c.sleepQuality?' · '+SLEEPQ[c.sleepQuality]:''):(c.sleepQuality?SLEEPQ[c.sleepQuality]:'–');
   const rows=[['Wohlbefinden',c.wellbeing?c.wellbeing+' von 5':'–'],['Schlaf',sleep],['Muskelkater',sore],['Stress',c.stress?STRESSQ[c.stress]:'–'],['Körpergewicht',d.weight!=null?f1(d.weight)+' kg':'–']];
-  return '<p class="ci-ok">'+I.check+'<span>Check-in bestätigt</span></p><dl class="ci-dl">'+rows.map(r=>'<div><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>').join('')+'</dl>'
+  /* Anmerkungen (checkin.context) stehen mit ihren Zeilenumbrüchen als eigener Block unter den Werten, nur wenn etwas drinsteht */
+  const ctx=c.context&&c.context.trim()?'<div class="ci-note"><dt>Anmerkungen</dt><dd>'+esc(c.context.trim())+'</dd></div>':'';
+  return '<p class="ci-ok">'+I.check+'<span>Check-in bestätigt</span></p><dl class="ci-dl">'+rows.map(r=>'<div><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>').join('')+ctx+'</dl>'
     +'<button type="button" class="btn sm" data-act="ci-edit">Bearbeiten</button>';
 }
 /* Tageswechsel (zurück, vor, Heute) für Karten in der Übersicht; pre = Präfix der Aktionen (ci-, act-, wt-).
@@ -433,6 +435,7 @@ function dailyCheckinHtml(date){
         +sev.map(([v,l])=>'<button type="button" class="chip sm" data-act="sore-area" data-a="'+a+'" data-v="'+v+'" aria-pressed="'+(sel[a]===v)+'">'+l+'</button>').join('')+'</div></div>').join('')+'</div></div>'
     +'<div class="q"><span class="lbl">Stress</span>'+choiceRow('stress',[['low','Niedrig'],['mid','Mittel'],['high','Hoch']],c.stress)+'</div>'
     +'<div class="q"><label class="lbl" for="ci-weight">Körpergewicht (nüchtern, morgens)</label><div class="row2"><div class="uw"><input class="field" id="ci-weight" inputmode="decimal" data-bind="ci-weight" value="'+esc(inputNum(d.weight))+'"><span class="un">kg</span></div></div></div>'
+    +'<div class="q"><label class="lbl" for="ci-ctx">Anmerkungen (optional)</label><textarea class="field" id="ci-ctx" data-live="ci-ctx" maxlength="500" placeholder="Zum Beispiel: Gestern Abend gefeiert, spät ins Bett.">'+esc(c.context||'')+'</textarea></div>'
     +'<button type="button" class="btn pri block" data-act="ci-confirm">Bestätigen</button>';
   return '<section class="card ci" id="ci-daily"'+(done?' data-done':'')+'><div class="ci-head"><div><div class="kicker">Jeden Tag</div><h2 class="h2" style="margin:4px 0 0">Daily Check-in</h2></div>'+nav+'</div>'
     +'<div class="ci-fold ci-sumfold"><div class="ci-in" id="ci-sum"'+(done?'':' inert')+'>'+ciSummaryHtml(date)+'</div></div>'
@@ -584,6 +587,11 @@ BIND['ci-sleep']=t=>{
 BIND['ci-note']=t=>{
   const date=ciDate(),c=ciPatch(date);
   c.note=t.value;saveDayLater(date,'checkin',800);
+};
+/* Anmerkungen im Daily Check-in: eigener Schlüssel checkin.context, getrennt von checkin.note (Notiz nach dem Training) */
+BIND['ci-ctx']=t=>{
+  const date=ciDate(),c=ciPatch(date);
+  c.context=t.value.slice(0,500);saveDayLater(date,'checkin',800);
 };
 BIND['ci-weight']=t=>{
   const date=ciDate(),d=dayRef(date),v=toNum(t.value);
