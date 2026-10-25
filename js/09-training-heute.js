@@ -435,7 +435,7 @@ function dailyCheckinHtml(date){
         +sev.map(([v,l])=>'<button type="button" class="chip sm" data-act="sore-area" data-a="'+a+'" data-v="'+v+'" aria-pressed="'+(sel[a]===v)+'">'+l+'</button>').join('')+'</div></div>').join('')+'</div></div>'
     +'<div class="q"><span class="lbl">Stress</span>'+choiceRow('stress',[['low','Niedrig'],['mid','Mittel'],['high','Hoch']],c.stress)+'</div>'
     +'<div class="q"><label class="lbl" for="ci-weight">Körpergewicht (nüchtern, morgens)</label><div class="row2"><div class="uw"><input class="field" id="ci-weight" inputmode="decimal" data-bind="ci-weight" value="'+esc(inputNum(d.weight))+'"><span class="un">kg</span></div></div></div>'
-    +'<div class="q"><label class="lbl" for="ci-ctx">Anmerkungen (optional)</label><textarea class="field" id="ci-ctx" data-live="ci-ctx" maxlength="500" placeholder="Zum Beispiel: Gestern Abend gefeiert, spät ins Bett.">'+esc(c.context||'')+'</textarea></div>'
+    +'<div class="q"><label class="lbl" for="ci-ctx">Anmerkungen (optional)</label><textarea class="field" id="ci-ctx" data-live="ci-ctx" maxlength="500">'+esc(c.context||'')+'</textarea></div>'
     +'<button type="button" class="btn pri block" data-act="ci-confirm">Bestätigen</button>';
   return '<section class="card ci" id="ci-daily"'+(done?' data-done':'')+'><div class="ci-head"><div><div class="kicker">Jeden Tag</div><h2 class="h2" style="margin:4px 0 0">Daily Check-in</h2></div>'+nav+'</div>'
     +'<div class="ci-fold ci-sumfold"><div class="ci-in" id="ci-sum"'+(done?'':' inert')+'>'+ciSummaryHtml(date)+'</div></div>'
