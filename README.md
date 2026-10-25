@@ -21,7 +21,7 @@ js/
   02-datenbank.js     Laden aller Sammlungen, Live-Abo, Fehlertexte
   03-oberflaeche.js   Zeichnen, Reiter, Meldungen
   04-berechnungen.js  Kalorien, Makros, Fortschritt
-  05-kopfzeile-dialoge.js  Wochenwahl, Darstellung, Claude-Anweisung, Abmelden, Bestätigungsdialog
+  05-kopfzeile-dialoge.js  Wochenwahl, Darstellung, Abmelden, Bestätigungsdialog
   06-uebersicht.js    Reiter Übersicht
   07-ernaehrung.js    Reiter Ernährung
   08-aktivitaeten-wasser.js  Aktivitäten und Wasser
@@ -51,8 +51,7 @@ sich die Datei ändert. `tests/run_tests.py` schlägt fehl, wenn ein Stempel ver
 - Adresse (GitHub Pages): `https://elmarhogervorst.github.io/cockpit./`
 - Anmelden geht nur mit E-Mail und Passwort. **Registrieren gibt es nicht.** Wer den Link kennt, sieht nur die Anmeldeseite.
 - Auf dem Handy: Seite öffnen, anmelden, dann „Zum Startbildschirm hinzufügen“. Die Sitzung bleibt auf dem Gerät erhalten.
-- „Claude“ (Funkeln in der Kopfzeile, links neben Abmelden) zeigt die Anweisung, nach der Claude im Cockpit arbeitet. Sie liegt in
-  der Datenbank (`ki/systemprompt`) und lässt sich kopieren.
+- Die Anweisung, nach der Claude im Cockpit arbeitet, liegt nur in der Datenbank (`ki/systemprompt`). Die Seite zeigt sie nicht an.
 
 ## Einrichtung (einmalig)
 

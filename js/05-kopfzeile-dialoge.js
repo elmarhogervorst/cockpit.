@@ -1,5 +1,5 @@
 'use strict';
-/* Start und Grenzen, Wochenwahl, Darstellung, Claude-Anweisung, Bestätigungsfenster */
+/* Start und Grenzen, Wochenwahl, Darstellung, Bestätigungsfenster */
 /* ---------- Start und Grenzen ---------- */
 /* Ab diesem Tag zählt das Cockpit. Gibt es ältere Dokumente, bleiben sie erreichbar. */
 const START_DATE='2026-10-20';
@@ -110,35 +110,6 @@ $('#btn-theme').addEventListener('click',()=>{
 });
 applyTheme(getTheme());
 
-/* ---------- Kopfzeile: Claude-Anweisung (nur lesen, Text aus ki/systemprompt) ---------- */
-$('#btn-claude').innerHTML=I.claude;
-function fillClaude(){
-  const k=S.ki;
-  $('#claude-t').textContent=(k&&k.title)||'Claude-Anweisung';
-  $('#claude-text').textContent=k&&k.text?k.text:S.kiErr?'Die Anweisung konnte nicht geladen werden.':S.kiLoaded?'Noch keine Anweisung gespeichert. Bitte Claude im Chat, sie anzulegen.':'Lade …';
-  $('#claude-when').textContent=k&&k.updatedAt?'Zuletzt geändert '+wzWhen(k.updatedAt):'';
-  $('#claude-copy').disabled=!(k&&k.text);
-}
-$('#btn-claude').addEventListener('click',()=>{
-  if(!DB){toast('Keine Verbindung zu deinen Daten');return;}
-  const d=$('#claude-dlg');
-  fillClaude();$('#claude-copy').textContent='Kopieren';
-  try{d.showModal();}catch(e){d.setAttribute('open','');}
-});
-(function(){
-  const d=$('#claude-dlg');
-  const close=()=>{try{d.close();}catch(e){d.removeAttribute('open');}};
-  $('#claude-close').addEventListener('click',close);
-  d.addEventListener('click',e=>{if(e.target===d)close();});
-  $('#claude-copy').addEventListener('click',async()=>{
-    const b=$('#claude-copy');
-    try{await navigator.clipboard.writeText((S.ki&&S.ki.text)||'');b.textContent='Kopiert';}
-    catch(e){
-      try{const r=document.createRange();r.selectNodeContents($('#claude-text'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Markiert';}
-      catch(e2){b.textContent='Nicht möglich';}
-    }
-  });
-})();
 /* ---------- Kopfzeile: Abmelden ---------- */
 $('#btn-logout').innerHTML=I.out;
 $('#btn-logout').addEventListener('click',async()=>{

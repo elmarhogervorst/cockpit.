@@ -598,7 +598,3 @@ details.wz[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
 .wz-dl dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);margin:0 0 2px}
 .wz-dl dd{margin:0;font-weight:500;overflow-wrap:break-word}
 @media (min-width:700px){.wz-dl{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
-/* Claude-Anweisung (Fenster aus der Kopfzeile) */
-.claude-sub{color:var(--ink-2);font-size:14px;margin:8px 0 14px}
-.claude-text{margin:0;max-height:min(52vh,420px);overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--mono);font-size:13px;line-height:1.55;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
-.claude-when{font-size:13px;color:var(--ink-3);margin:10px 0 0}

@@ -201,13 +201,10 @@ def run(rows, today, label, full):
             check("Startgewicht gibt es nicht mehr", "Startgewicht" not in txt)
             check("Deine Daten werden nur angezeigt (Alter 30, Ziel Muskelaufbau)", "Alter" in txt and "30" in txt and "Muskelaufbau" in txt and "Trainingsvorlieben" not in txt, txt[:300].replace("\n", " "))
 
-        # 4b. Claude-Anweisung über den Knopf in der Kopfzeile
+        # 4b. Die Claude-Anweisung (ki/systemprompt) wird in der Oberfläche nicht mehr angezeigt
         if not full:
-            check("Claude-Knopf steht vor dem Abmelden-Knopf", page.evaluate("document.querySelector('#btn-claude').nextElementSibling.id") == "btn-logout")
-            page.click("#btn-claude"); page.wait_for_selector("#claude-dlg[open]")
-            check("Claude-Fenster zeigt die gespeicherte Anweisung", "Lies zuerst wissen/datenmodell" in page.inner_text("#claude-text"), page.inner_text("#claude-text"))
-            page.click("#claude-close"); page.wait_for_selector("#claude-dlg", state="hidden")
-            check("Claude-Fenster lässt sich schließen", not page.evaluate("document.querySelector('#claude-dlg').open"))
+            check("Kopfzeile hat keinen Claude-Knopf und kein Anweisungs-Fenster", page.locator("#btn-claude, #claude-dlg").count() == 0)
+            check("Der Text der Anweisung steht nirgends auf der Seite", "Lies zuerst wissen/datenmodell" not in page.content())
 
         # 5. Änderung von einem anderen Gerät (Realtime) erscheint
         page.click('#nav button[data-tab="overview"]'); page.wait_for_timeout(200)
@@ -230,7 +227,7 @@ def run(rows, today, label, full):
 
         # 7. Es gibt keinen Backup-Knopf mehr (die Sicherung läuft nicht über die Seite)
         check("Kopfzeile hat keinen Backup-Knopf mehr", page.locator("#btn-export, [aria-label*='Backup'], [title*='Backup']").count() == 0)
-        check("Kopfzeile hat noch Darstellung, Claude und Abmelden", all(page.locator(s).count() == 1 for s in ("#btn-theme", "#btn-claude", "#btn-logout")))
+        check("Kopfzeile hat noch Darstellung und Abmelden", all(page.locator(s).count() == 1 for s in ("#btn-theme", "#btn-logout")))
         check("Alle Knöpfe der Kopfzeile zeigen ein Symbol", page.evaluate("[...document.querySelectorAll('.tools button')].every(b=>b.querySelector('svg'))"))
 
         # 8. Sitzung bleibt nach Neuladen, Abmelden sperrt wieder

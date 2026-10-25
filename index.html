@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="css/cockpit.css?v=af56b7d8">
+<link rel="stylesheet" href="css/cockpit.css?v=56544b01">
 <link rel="stylesheet" href="css/basis.css?v=b13d5536">
 </head>
 <body>
@@ -32,7 +32,6 @@
     </nav>
     <div class="tools">
       <button type="button" class="iconbtn" id="btn-theme" aria-label="Darstellung wechseln" title="Darstellung wechseln"></button>
-      <button type="button" class="iconbtn" id="btn-claude" aria-label="Claude-Anweisung anzeigen" title="Claude-Anweisung"></button>
       <button type="button" class="iconbtn" id="btn-logout" aria-label="Abmelden" title="Abmelden"></button>
     </div>
   </header>
@@ -47,18 +46,6 @@
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
       <button type="button" class="btn pri" id="confirm-ok">Überschreiben</button>
       <button type="button" class="btn" id="confirm-cancel">Abbrechen</button>
-    </div>
-  </div>
-</dialog>
-<dialog id="claude-dlg" aria-labelledby="claude-t">
-  <div class="dlg">
-    <h2 class="h2" id="claude-t">Claude-Anweisung</h2>
-    <p class="claude-sub">So arbeitet Claude in deinem cockpit. Der Text liegt in der Datenbank (ki/systemprompt).</p>
-    <pre class="claude-text" id="claude-text" tabindex="0"></pre>
-    <p class="claude-when" id="claude-when"></p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
-      <button type="button" class="btn pri" id="claude-copy">Kopieren</button>
-      <button type="button" class="btn" id="claude-close">Schließen</button>
     </div>
   </div>
 </dialog>
@@ -86,11 +73,11 @@
 <script src="js/config.js?v=ca6df649"></script>
 <script src="js/db-supabase.js?v=c38e5ee6"></script>
 <script src="js/auth.js?v=96243408"></script>
-<script src="js/01-grundlagen.js?v=8d4403bb"></script>
-<script src="js/02-datenbank.js?v=f5a19d41"></script>
+<script src="js/01-grundlagen.js?v=3bc7cd16"></script>
+<script src="js/02-datenbank.js?v=d33ef60e"></script>
 <script src="js/03-oberflaeche.js?v=5fd0a3e0"></script>
 <script src="js/04-berechnungen.js?v=c79fbd92"></script>
-<script src="js/05-kopfzeile-dialoge.js?v=81d180e9"></script>
+<script src="js/05-kopfzeile-dialoge.js?v=2669a60d"></script>
 <script src="js/06-uebersicht.js?v=285ff1b6"></script>
 <script src="js/07-ernaehrung.js?v=c49f967f"></script>
 <script src="js/08-aktivitaeten-wasser.js?v=805b4dde"></script>

@@ -99,7 +99,7 @@ Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"K
 | `presets`   | beliebig             | Trainingsvorlagen: Name, Reihenfolge, Übungen mit Sätzen                                                          |
 | `days`      | Datum `JJJJ-MM-TT`   | Ein Tag: Plan, Training (`workout`), Mahlzeiten (`meals`), Aktivitäten, Check-in, Ziele des Tages, Wasser, Gewicht |
 | `wissen`    | `vorlieben`, `regeln`, `spaeter`, `entscheidungen`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
-| `ki`        | `systemprompt`       | Anweisung an Claude (`title`, `text`, `updatedAt`), angezeigt über den Claude-Knopf in der Kopfzeile              |
+| `ki`        | `systemprompt`       | Anweisung an Claude (`title`, `text`, `updatedAt`), nur in der Datenbank gespeichert, die Oberfläche zeigt sie nicht |
 
 Reiter in der Oberfläche: Übersicht (`overview`), Training (`training`), Ernährung (`nutrition`) und **Wissen** (Reiter-ID `body`,
 historisch „Körper“).
@@ -126,10 +126,10 @@ gewogen wurde.
 
 ### Claude-Anweisung
 
-Der Knopf „Claude“ in der Kopfzeile öffnet ein Fenster mit dem Text aus `ki/systemprompt`: Ablauf (auswerten, Training planen,
-Nährwerte planen), wo die Daten liegen (mit Verweis auf `wissen/datenmodell`), Schreibregeln (`log_meal`, `merge_doc`) und
-Grundsätze. Das Fenster ist nur lesend und hat einen Kopieren-Knopf; der Text wird, wie alles andere, nur über die Datenbank
-geändert.
+`ki/systemprompt` enthält den Ablauf (auswerten, Training planen, Nährwerte planen), wo die Daten liegen (mit Verweis auf
+`wissen/datenmodell`), die Schreibregeln (`log_meal`, `merge_doc`) und Grundsätze. Der Text liegt nur in der Datenbank; die
+Oberfläche liest ihn nicht und zeigt ihn nirgends an (es gibt keinen Claude-Knopf mehr in der Kopfzeile). Geändert wird er, wie
+alles andere, über die Datenbank.
 
 ## 6. Sicherheit
 
@@ -196,7 +196,7 @@ Stärke des Schutzes hängt am Passwort. Sicherungskopien enthalten persönliche
 - Wasser eintragen und ein Wissen-Feld speichern landen in der (nachgebauten) Datenbank.
 - Eine Änderung „von einem anderen Gerät“ erscheint ohne Neuladen.
 - Ein verweigertes Speichern zeigt eine Meldung, die Seite bleibt benutzbar.
-- Die Kopfzeile hat keinen Backup-Knopf mehr, aber noch Darstellung, Claude und Abmelden.
+- Die Kopfzeile hat keinen Backup-Knopf und keinen Claude-Knopf mehr, sondern nur noch Darstellung und Abmelden.
 - Die Sitzung überlebt ein Neuladen; Abmelden sperrt die Seite wieder.
 
 Nicht abgedeckt, weil nur mit dem echten Projekt prüfbar: echte Netzwerkverbindung, die E-Mail zum Zurücksetzen des Passworts und das
