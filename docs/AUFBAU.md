@@ -98,11 +98,19 @@ Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"K
 | `exercises` | beliebig             | Übungen: Name, Muskelgruppe, Beschreibung, zeitbasiert ja/nein                                                    |
 | `presets`   | beliebig             | Trainingsvorlagen: Name, Reihenfolge, Übungen mit Sätzen                                                          |
 | `days`      | Datum `JJJJ-MM-TT`   | Ein Tag: Plan, Training (`workout`), Mahlzeiten (`meals`), Aktivitäten, Check-in, Ziele des Tages, Wasser, Gewicht |
+| `weeks`     | Montag `JJJJ-MM-TT`  | Notiz zur ganzen Woche (`weekStart`, `note`, `updatedAt`), zum Beispiel „krank, nichts geloggt“. Leere Notiz = Dokument gelöscht |
 | `wissen`    | `vorlieben`, `regeln`, `spaeter`, `entscheidungen`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
 | `ki`        | `systemprompt`       | Anweisung an Claude (`title`, `text`, `updatedAt`), nur in der Datenbank gespeichert, die Oberfläche zeigt sie nicht |
 
 Reiter in der Oberfläche: Übersicht (`overview`), Training (`training`), Ernährung (`nutrition`) und **Wissen** (Reiter-ID `body`,
 historisch „Körper“).
+
+### Notiz zur Woche
+
+Freitext, der für eine ganze Woche gilt und nicht für einen Tag (tagesbezogene Anmerkungen stehen weiter im Daily Check-in).
+Bearbeitet wird sie im Reiter Training, Unterreiter Einheiten, unter den Wochentagen: für die Woche, die die Wochenwahl gerade zeigt,
+also auch rückblickend. Gespeichert wird mit „Speichern“; leer speichern löscht das Dokument. Die Übersicht zeigt in der Karte
+„Diese Woche“ die Notiz der aktuellen Woche, nur lesend. Die Seite wartet beim Laden nicht auf `weeks` (nicht in `KEYS`).
 
 ### Reiter „Wissen“
 

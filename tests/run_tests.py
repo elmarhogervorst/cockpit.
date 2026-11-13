@@ -169,6 +169,40 @@ def run(rows, today, label, full):
             check("Zusammenfassung zeigt die Anmerkungen", "Anmerkungen" in summ and "Gestern gefeiert," in summ and "spät ins Bett." in summ, summ[:200].replace("\n", " "))
             page.click('[data-act="ci-edit"]'); page.wait_for_timeout(800)
 
+        # 3c. Notiz zur Woche: im Training für die gezeigte Woche (auch rückblickend), Übersicht zeigt die der aktuellen Woche
+        if not full:
+            ws = (dt.date.fromisoformat(today) - dt.timedelta(days=dt.date.fromisoformat(today).weekday())).isoformat()
+            prev = (dt.date.fromisoformat(ws) - dt.timedelta(days=7)).isoformat()
+            page.click('#nav button[data-tab="training"]'); page.wait_for_timeout(150)
+            page.locator('#view [data-act="train-sub"][data-k="today"]').click(); page.wait_for_timeout(200)
+            check("Training hat einen Knopf für die Notiz zur Woche", page.locator('#view [data-act="wn-edit"]').count() == 1)
+            page.locator('#view [data-act="wn-edit"]').click(); page.wait_for_timeout(150)
+            note = "Krank,\nnichts geloggt."
+            page.fill("#wn-text", note); page.click('[data-act="wn-save"]'); page.wait_for_timeout(700)
+            got = page.evaluate("(w)=>window.__MOCK_STORE__.get('weeks',w)", ws)
+            check("Notiz landet in weeks/<Montag>", bool(got) and got.get("note") == note and got.get("weekStart") == ws, got)
+            check("Training zeigt die gespeicherte Notiz", "nichts geloggt." in page.inner_text("#wn-card"))
+            check("Notiz gilt nicht für einen Tag (days bleibt ohne Notizfeld)", "note" not in (page.evaluate("(d)=>window.__MOCK_STORE__.get('days',d)", today) or {}))
+            page.click('#nav button[data-tab="overview"]'); page.wait_for_timeout(200)
+            check("Übersicht zeigt die Notiz der aktuellen Woche", "notiz zur woche" in page.inner_text("#view").lower() and "Krank," in page.inner_text("#view"))
+            # Rückblickend: Vorwoche nachtragen, Übersicht bleibt bei der aktuellen Woche
+            page.click('#nav button[data-tab="training"]'); page.wait_for_timeout(150)
+            page.locator('[data-act="wk-prev"]').click(); page.wait_for_timeout(200)
+            check("Vorwoche hat noch keine Notiz", page.locator("#wn-card").count() == 0 and page.locator('#view [data-act="wn-edit"]').count() == 1)
+            page.locator('#view [data-act="wn-edit"]').click(); page.wait_for_timeout(150)
+            page.fill("#wn-text", "Urlaub"); page.click('[data-act="wn-save"]'); page.wait_for_timeout(700)
+            check("Notiz der Vorwoche landet in weeks/<Montag der Vorwoche>", (page.evaluate("(w)=>window.__MOCK_STORE__.get('weeks',w)", prev) or {}).get("note") == "Urlaub")
+            page.locator('[data-act="wk-today"]').click(); page.wait_for_timeout(200)
+            # Änderung von einem anderen Gerät erscheint live
+            page.evaluate("(w)=>window.__MOCK_STORE__.remoteUpsert('weeks',w,{weekStart:w,note:'Vom Handy geändert'})", ws); page.wait_for_timeout(500)
+            check("Notiz eines anderen Geräts erscheint live", "Vom Handy geändert" in page.inner_text("#view"))
+            # Leeren entfernt die Notiz
+            page.locator('#view [data-act="wn-edit"]').click(); page.wait_for_timeout(150)
+            page.fill("#wn-text", "  "); page.click('[data-act="wn-save"]'); page.wait_for_timeout(700)
+            check("Leere Notiz löscht das Dokument", page.evaluate("(w)=>window.__MOCK_STORE__.get('weeks',w)", ws) is None and page.locator("#wn-card").count() == 0)
+            page.click('#nav button[data-tab="overview"]'); page.wait_for_timeout(200)
+            check("Übersicht ohne Notiz zeigt keinen leeren Block", page.locator("#view .wn-ov").count() == 0)
+
         # 4. Wissen ist nur lesbar, Datenmodell und Startgewicht werden nicht gezeigt
         if not full:
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)
