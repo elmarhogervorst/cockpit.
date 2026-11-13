@@ -67,8 +67,7 @@ VIEWS.overview=function(){
   }).join('');
   const week='<div class="kicker">Diese Woche</div><div class="wk">'+dots+'</div>'
     +'<div class="wk-key"><span><i class="dot"></i>Training</span><span><i class="dot done">'+I.check+'</i>Erledigt</span><span><i class="dot rest"></i>Ruhe</span><span><i class="today-key"></i>Heute</span></div>'
-    +'<p style="margin-top:14px;font-size:13px;color:var(--ink-2)">'+(trainDays?doneDays+' von '+trainDays+' Einheiten erledigt':'Noch kein Training eingetragen')+'</p>'
-    +(weekNote(ws)?'<div class="wn-ov"><div class="kicker">Notiz zur Woche</div><p class="wn-text">'+esc(weekNote(ws))+'</p></div>':'');
+    +'<p style="margin-top:14px;font-size:13px;color:var(--ink-2)">'+(trainDays?doneDays+' von '+trainDays+' Einheiten erledigt':'Noch kein Training eingetragen')+'</p>';
   return '<div class="kicker datebar">'+esc(longDate(date))+'</div>'
     +(tg.set
       ?'<div class="tiles">'

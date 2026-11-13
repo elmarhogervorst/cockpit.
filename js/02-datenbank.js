@@ -50,24 +50,6 @@ function saveDayLater(date,field,ms){
   },ms||500);
 }
 
-/* Notiz zur Woche: weeks/<Montag> {weekStart, note, updatedAt}. Leere Notiz = Dokument löschen. */
-const pendW={};
-function saveWeekNote(ws,note){
-  note=String(note||'').trim().slice(0,1000);
-  if(note)S.weeks[ws]=Object.assign({},S.weeks[ws],{weekStart:ws,note,updatedAt:new Date().toISOString()});
-  else delete S.weeks[ws];
-  if(!DB)return Promise.resolve();
-  pendW[ws]=(pendW[ws]||0)+1;
-  const path='weeks/'+ws;
-  return enqueue(path,async()=>{
-    const ref=DB.doc(path);
-    if(!note){await ref.delete();return;}
-    const patch={note,updatedAt:new Date().toISOString()};
-    const snap=await ref.get();
-    if(snap.exists)await ref.update(patch);else await ref.set(Object.assign({weekStart:ws},patch));
-  }).finally(()=>{pendW[ws]--;});
-}
-
 function subscribe(){
   const on=(ref,key,apply)=>ref.onSnapshot(s=>{apply(s);LOADED[key]=true;requestRender();},e=>{console.error(e);UI.dbErr=e;requestRender();});
   on(DB.doc('profile/main'),'profile',s=>{S.profile=s.exists?clone(s.data()):null;});
@@ -83,12 +65,6 @@ function subscribe(){
     S.wissen=next;UI.wErr=false;
     LOADED.wissen=true;requestRender();
   },e=>{console.error(e);UI.wErr=true;requestRender();});
-  /* Wochennotizen gehören nicht zu den Pflichtdaten: die Seite wartet nicht auf sie */
-  DB.collection('weeks').onSnapshot(s=>{
-    const next={};s.docs.forEach(d=>{next[d.id]=clone(d.data());});
-    Object.keys(pendW).forEach(k=>{if(pendW[k]>0){if(S.weeks[k])next[k]=S.weeks[k];else delete next[k];}});
-    S.weeks=next;LOADED.weeks=true;requestRender();
-  },e=>{console.error(e);});
   on(DB.collection('days').orderBy('date','desc'),'days',s=>{
     const next={};
     s.docs.forEach(d=>{next[d.id]=clone(d.data());});

@@ -294,15 +294,6 @@ textarea.field{resize:vertical;min-height:84px}
 .ci-ok.no svg{background:var(--ink-3);color:var(--card)}
 .sess.skipped .sess-ok svg{background:var(--ink-3);color:var(--panel)}
 .skipb{margin-top:10px}
-/* Notiz zur Woche */
-.wn-add{margin:-4px 0 16px}
-.wn-add .btn svg{width:16px;height:16px;margin-right:4px;vertical-align:-3px}
-.wknote{margin-bottom:16px}
-.wknote textarea.field{display:block;width:100%;min-height:72px;margin-top:8px}
-.wn-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.wn-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.wn-text{margin:6px 0 0;font-size:14px;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
-.wn-ov{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .skip-note{margin:12px 0 0;color:var(--ink-2);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
 .skip-note b{color:var(--ink)}
 #sk-card textarea.field{min-height:96px}

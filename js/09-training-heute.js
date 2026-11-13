@@ -120,36 +120,8 @@ function todayView(){
   }
   const right=(si.none||si.rest||!si.w)?'':'<div class="stack">'+(date<=real&&si.w.status!=='skipped'?timerHtml(date,si.w):'')+checkinHtml(date,true)+'</div>';
   return weekNavHtml()+'<div class="daychips" role="group" aria-label="Wochentage">'+chips+'</div>'
-    +weekNoteHtml(ws)
     +'<div class="grid2"><div class="stack">'+left+'</div>'+right+'</div>';
 }
-/* ---------- Notiz zur Woche (weeks/<Montag>.note) ----------
-   Freitext für die ganze Woche, nicht für einen Tag (zum Beispiel: krank, nichts geloggt). Für jede Woche, die die
-   Wochenwahl zeigt, also auch rückblickend. Gespeichert wird erst mit „Speichern“; leer speichern entfernt die Notiz. */
-const weekNote=ws=>{const w=S.weeks&&S.weeks[ws];return w&&w.note?String(w.note):'';};
-function weekNoteHtml(ws){
-  const note=weekNote(ws),kick='Notiz zur Woche · KW '+isoWeekNo(ws);
-  if(UI.wnEdit===ws){
-    return '<section class="card wknote" id="wn-card"><label class="kicker" for="wn-text">'+kick+'</label>'
-      +'<textarea class="field" id="wn-text" data-live="wn-text" maxlength="1000" placeholder="Gilt für die ganze Woche. Zum Beispiel: Krank, kaum etwas geloggt.">'+esc(UI.wnDraft)+'</textarea>'
-      +'<div class="wn-acts"><button type="button" class="btn pri sm" data-act="wn-save">Speichern</button><button type="button" class="btn sm" data-act="wn-cancel">Abbrechen</button></div></section>';
-  }
-  if(!note)return '<div class="wn-add"><button type="button" class="btn sm" data-act="wn-edit">'+I.plus+'Notiz zur Woche</button></div>';
-  return '<section class="card wknote" id="wn-card"><div class="wn-head"><span class="kicker">'+kick+'</span>'
-    +'<button type="button" class="iconb" data-act="wn-edit" aria-label="Notiz zur Woche bearbeiten" title="Bearbeiten">'+I.edit+'</button></div>'
-    +'<p class="wn-text">'+esc(note)+'</p></section>';
-}
-ACT['wn-edit']=()=>{const ws=viewWeek();UI.wnEdit=ws;UI.wnDraft=weekNote(ws);UI.focusSel='#wn-text';render();};
-ACT['wn-cancel']=()=>{UI.wnEdit=null;UI.wnDraft='';render();};
-ACT['wn-save']=()=>{
-  const ws=UI.wnEdit;if(!ws)return;
-  const had=!!weekNote(ws),note=String(UI.wnDraft||'').trim();
-  UI.wnEdit=null;UI.wnDraft='';
-  saveWeekNote(ws,note);render();
-  toast(note?'Notiz zur Woche gespeichert':had?'Notiz zur Woche entfernt':'Keine Notiz eingetragen');
-};
-BIND['wn-text']=t=>{UI.wnDraft=t.value.slice(0,1000);};
-
 /* ---------- Trainingszeit (workout.startedAt / finishedAt als ISO) ----------
    Ablauf: zuerst nur „Start“. Läuft die Zeit, stehen „Stopp“ und die verstrichene Zeit da. Nach „Stopp“ stehen Start, Ende und
    Dauer fest da; erst dann erscheint „Falsch eingetragen? …“ mit „Korrigieren“ (Start und Ende bearbeiten, dann bestätigen).
