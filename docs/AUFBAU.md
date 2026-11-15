@@ -119,7 +119,7 @@ nennt.
 | `targets`   | `main`               | Tagesziele, z. B. Wasser (`waterGoalMl`)                                                                          |
 | `exercises` | beliebig             | Übungen: Name, Muskelgruppe, Beschreibung, zeitbasiert ja/nein                                                    |
 | `presets`   | beliebig             | Trainingsvorlagen: Name, Reihenfolge, Übungen mit Sätzen                                                          |
-| `days`      | Datum `JJJJ-MM-TT`   | Ein Tag: Plan, Training (`workout`), Mahlzeiten (`meals`), Aktivitäten, Check-in, Ziele des Tages, Wasser, Gewicht |
+| `days`      | Datum `JJJJ-MM-TT`   | Ein Tag: Plan, Training (`workout`), Mahlzeiten (`meals`), Aktivitäten, Check-in, Ziele des Tages, Wasser, Gewicht, Körperumfänge (`measures`, cm) |
 | `wissen`    | `vorlieben`, `regeln`, `spaeter`, `entscheidungen`, `datenmodell` | Dokumente für den Reiter **Wissen** (siehe unten)                                    |
 | `ki`        | `systemprompt`       | Anweisung an Claude (`title`, `text`, `updatedAt`), nur in der Datenbank gespeichert, die Oberfläche zeigt sie nicht |
 

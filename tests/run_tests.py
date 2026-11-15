@@ -205,6 +205,18 @@ def run(rows, today, label, full):
             check("Zusammenfassung zeigt die Anmerkungen", "Anmerkungen" in summ and "Gestern gefeiert," in summ and "spät ins Bett." in summ, summ[:200].replace("\n", " "))
             page.click('[data-act="ci-edit"]'); page.wait_for_timeout(800)
 
+        # 3c. Körperumfänge im Daily Check-in: days/<Datum>.measures in cm
+        if not full:
+            check("Daily Check-in hat 7 Umfangsfelder", page.locator("#ci-form [data-bind='ci-m']").count() == 7)
+            page.fill("#ci-m-waist", "84,5"); page.fill("#ci-m-armL", "36"); page.fill("#ci-m-thighR", "58,2"); page.fill("#ci-m-armR", "5")
+            page.locator("#ci-ctx").click(); page.wait_for_timeout(900)
+            got = page.evaluate("(d)=>{const x=window.__MOCK_STORE__.get('days',d);return x&&x.measures||null}", today)
+            check("Umfänge landen in measures (Komma ok, unplausibler Wert verworfen)", got == {"waist": 84.5, "armL": 36, "thighR": 58.2}, got)
+            page.click('[data-act="ci-confirm"]'); page.wait_for_timeout(800)
+            summ = page.inner_text("#ci-sum")
+            check("Zusammenfassung zeigt die Umfänge", "Bauch" in summ and "84,5 cm" in summ and "Arm links" in summ and "Arm rechts" not in summ, summ[:300].replace("\n", " "))
+            page.click('[data-act="ci-edit"]'); page.wait_for_timeout(800)
+
         # 4. Wissen ist nur lesbar, Datenmodell und Startgewicht werden nicht gezeigt
         if not full:
             page.click('#nav button[data-tab="body"]'); page.wait_for_timeout(250)

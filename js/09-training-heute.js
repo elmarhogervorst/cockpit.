@@ -400,13 +400,17 @@ const ciDate=()=>UI.tab==='overview'?(UI.ciDate||TODAY()):(UI.trainDate||TODAY()
    „Bestätigen“ klappt die Karte zu einer Zusammenfassung ein (checkin.confirmedAt), „Bearbeiten“ klappt sie wieder auf. */
 const SEV_LABEL={none:'keiner',light:'leicht',medium:'mittel',strong:'stark'};
 const SLEEPQ={bad:'schlecht',ok:'okay',good:'gut'},STRESSQ={low:'niedrig',mid:'mittel',high:'hoch'};
+/* Körperumfänge in cm (days/<Datum>.measures). Bauch = auf Nabelhöhe, Hüfte = breiteste Stelle, Brust = auf Brustwarzenhöhe,
+   Arme entspannt, Oberschenkel in der Mitte. Immer morgens, gleiche Stelle, Maßband locker anliegend. */
+const MEASURES=[['waist','Bauch (Nabelhöhe)'],['chest','Brust'],['hip','Hüfte'],['armL','Arm links'],['armR','Arm rechts'],['thighL','Oberschenkel links'],['thighR','Oberschenkel rechts']];
+const measOf=d=>(d&&d.measures&&typeof d.measures==='object')?d.measures:{};
 function ciSummaryHtml(date){
   const d=S.days[date]||{},c=d.checkin||{};
   const sel=(Array.isArray(c.sorenessAreas)||!c.sorenessAreas)?{}:c.sorenessAreas;
   const set=SORE_AREAS.filter(a=>sel[a]),act=set.filter(a=>sel[a]!=='none');
   const sore=!set.length?'–':act.length?act.map(a=>a+' '+SEV_LABEL[sel[a]]).join(', '):'Keiner';
   const sleep=c.sleepH!=null?f1(c.sleepH)+' Std'+(c.sleepQuality?' · '+SLEEPQ[c.sleepQuality]:''):(c.sleepQuality?SLEEPQ[c.sleepQuality]:'–');
-  const rows=[['Wohlbefinden',c.wellbeing?c.wellbeing+' von 5':'–'],['Schlaf',sleep],['Muskelkater',sore],['Stress',c.stress?STRESSQ[c.stress]:'–'],['Körpergewicht',d.weight!=null?f1(d.weight)+' kg':'–']];
+  const rows=[['Wohlbefinden',c.wellbeing?c.wellbeing+' von 5':'–'],['Schlaf',sleep],['Muskelkater',sore],['Stress',c.stress?STRESSQ[c.stress]:'–'],['Körpergewicht',d.weight!=null?f1(d.weight)+' kg':'–']].concat(MEASURES.filter(([k])=>measOf(d)[k]!=null).map(([k,l])=>[l,f1(measOf(d)[k])+' cm']));
   /* Anmerkungen (checkin.context) stehen mit ihren Zeilenumbrüchen als eigener Block unter den Werten, nur wenn etwas drinsteht */
   const ctx=c.context&&c.context.trim()?'<div class="ci-note"><dt>Anmerkungen</dt><dd>'+esc(c.context.trim())+'</dd></div>':'';
   return '<p class="ci-ok">'+I.check+'<span>Check-in bestätigt</span></p><dl class="ci-dl">'+rows.map(r=>'<div><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>').join('')+ctx+'</dl>'
@@ -435,6 +439,7 @@ function dailyCheckinHtml(date){
         +sev.map(([v,l])=>'<button type="button" class="chip sm" data-act="sore-area" data-a="'+a+'" data-v="'+v+'" aria-pressed="'+(sel[a]===v)+'">'+l+'</button>').join('')+'</div></div>').join('')+'</div></div>'
     +'<div class="q"><span class="lbl">Stress</span>'+choiceRow('stress',[['low','Niedrig'],['mid','Mittel'],['high','Hoch']],c.stress)+'</div>'
     +'<div class="q"><label class="lbl" for="ci-weight">Körpergewicht (nüchtern, morgens)</label><div class="row2"><div class="uw"><input class="field" id="ci-weight" inputmode="decimal" data-bind="ci-weight" value="'+esc(inputNum(d.weight))+'"><span class="un">kg</span></div></div></div>'
+    +'<div class="q"><span class="lbl">Umfänge (optional, morgens, locker gemessen)</span><div class="mgrid">'+MEASURES.map(([k,l])=>'<div><label class="lbl sm" for="ci-m-'+k+'">'+l+'</label><div class="uw"><input class="field" id="ci-m-'+k+'" inputmode="decimal" data-bind="ci-m" data-k="'+k+'" value="'+esc(inputNum(measOf(d)[k]))+'"><span class="un">cm</span></div></div>').join('')+'</div></div>'
     +'<div class="q"><label class="lbl" for="ci-ctx">Anmerkungen (optional)</label><textarea class="field" id="ci-ctx" data-live="ci-ctx" maxlength="500">'+esc(c.context||'')+'</textarea></div>'
     +'<button type="button" class="btn pri block" data-act="ci-confirm">Bestätigen</button>';
   return '<section class="card ci" id="ci-daily"'+(done?' data-done':'')+'><div class="ci-head"><div><div class="kicker">Jeden Tag</div><h2 class="h2" style="margin:4px 0 0">Daily Check-in</h2></div>'+nav+'</div>'
@@ -458,7 +463,7 @@ function foldCi(done,date){
 }
 ACT['ci-confirm']=()=>{
   const date=ciDate(),d=dayRef(date),c=ciPatch(date);
-  const any=d.weight!=null||['wellbeing','sleepH','sleepQuality','stress'].some(k=>c[k]!=null)||Object.values(soreAreas(c)).some(Boolean);
+  const any=d.weight!=null||Object.values(measOf(d)).some(v=>v!=null)||['wellbeing','sleepH','sleepQuality','stress'].some(k=>c[k]!=null)||Object.values(soreAreas(c)).some(Boolean);
   if(!any){toast('Trage mindestens einen Wert ein');return;}
   c.confirmedAt=new Date().toISOString();
   saveDay(date,{checkin:c});
@@ -598,6 +603,13 @@ BIND['ci-weight']=t=>{
   d.weight=v!=null&&v>20&&v<400?v:null;t.value=inputNum(d.weight);
   saveDayLater(date,'weight',300);
 };
+BIND['ci-m']=t=>{
+  const date=ciDate(),d=dayRef(date),k=t.dataset.k,v=toNum(t.value);
+  if(!d.measures||typeof d.measures!=='object')d.measures={};
+  if(v!=null&&v>=10&&v<=300)d.measures[k]=v;else delete d.measures[k];
+  t.value=inputNum(d.measures[k]);
+  saveDayLater(date,'measures',300);
+};
 ACT.finish=()=>{
   const date=UI.trainDate||TODAY();if(isSkipped(date))return;
   const w=wk(date);
@@ -631,6 +643,7 @@ ACT.finish=()=>{
   const patch={workout:w};
   const d=S.days[date];if(d&&d.checkin)patch.checkin=d.checkin;
   if(d&&d.weight!=null)patch.weight=d.weight;
+  if(d&&d.measures)patch.measures=d.measures;
   saveDay(date,patch);
   /* Alles klappt zusammen: Übungen zu, Karte „Wie war’s heute?“ wird zur Zusammenfassung; danach sauber neu zeichnen
      (Kopf mit Dauer, Ergebnisse statt Plan, Zeit-Karte) */
