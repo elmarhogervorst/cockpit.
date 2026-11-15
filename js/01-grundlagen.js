@@ -54,7 +54,7 @@ const UI={
   planDate:null,planDraft:null,planDirty:false,planSrc:'own',planScope:null,planBase:'',editingPreset:null,wk:null,
   exFilter:'Alle',exSearch:'',exEdit:null,exForm:null,confirmDel:null,
   wOpen:{},wErr:false,
-  mealForm:{name:'',kcal:'',protein:'',carbs:'',fat:'',ing:null},mealEdit:null,mealOpen:{},ingNew:{},ingAddOpen:{},ingEdit:null,repeatN:3,
+  mealOpen:{},repeatN:3,
   ciDate:null,actDate:null,actForm:{name:'',note:'',min:'',time:'',id:null},actOpen:false,nfDraft:null,tmEdit:null,tmDraft:null,actInfo:false,skipDraft:null,waterDate:null,waterSet:false,waterForm:null,animUntil:0,focusSel:null,dbOff:false,dbErr:null
 };
 const LOADED={};

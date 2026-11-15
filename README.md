@@ -23,7 +23,7 @@ js/
   04-berechnungen.js  Kalorien, Makros, Fortschritt
   05-kopfzeile-dialoge.js  Wochenwahl, Darstellung, Abmelden, Bestätigungsdialog
   06-uebersicht.js    Reiter Übersicht
-  07-ernaehrung.js    Reiter Ernährung
+  07-ernaehrung.js    Reiter Ernährung (Mahlzeiten nur Anzeige)
   08-aktivitaeten-wasser.js  Aktivitäten und Wasser
   09-training-heute.js  Training: heute
   10-training-plan.js   Training: Plan und Vorlagen
@@ -32,7 +32,7 @@ js/
   13-wissen-sammlung.js  Reiter Wissen: Regelwerk von Claude als ein- und ausklappbare Blöcke, nur lesen
   14-start.js         Start
   vendor/supabase.js  Supabase-Bibliothek (supabase-js, MIT), Version in VERSION.txt
-supabase/migrations/  Datenbankschema, Zugriffsregeln, Registrierungssperre, Funktion log_meal (Mahlzeit von außen eintragen)
+supabase/migrations/  Datenbankschema, Zugriffsregeln, Registrierungssperre, Funktionen log_meal, update_meal, delete_meal (Mahlzeiten anlegen, ändern, löschen; nur über Claude)
 tests/                Browser-Tests mit nachgebautem Supabase
 tools/stempel.py      Versionsstempel (?v=…) an den Skript- und Stildateien in index.html
 docs/AUFBAU.md        Ausführliche Beschreibung (Datenmodell, Datenfluss, Entscheidungen)

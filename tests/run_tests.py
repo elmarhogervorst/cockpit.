@@ -134,6 +134,30 @@ def run(rows, today, label, full):
             if tg.count():
                 tg.click(); page.wait_for_timeout(300)
             check("Zutaten lassen sich aufklappen", "Kartoffeln, 300 g" in page.inner_text("#view") and "Hähnchen, 150 g" in page.inner_text("#view"))
+            # Mahlzeiten sind in der Seite nur Anzeige: kein Formular, nichts zum Bearbeiten oder Löschen (das macht Claude per Datenbankfunktion)
+            meal_ui = ("#meal-form, #meal-card, #meal-edit-form, [data-act^='meal-edit'], [data-act='meal-del'], [data-act='meal-split'], "
+                       "[data-act^='ing-'], [data-act^='mf-'], [data-form^='ing-']")
+            def to_today():
+                t = page.locator('[data-act="nut-today"]')
+                if not t.is_disabled():
+                    t.click(); page.wait_for_timeout(150)
+            only_nf = "[...document.querySelectorAll('#view input, #view textarea, #view select')].every(e=>e.id==='nf-note')"
+            for lbl, nav in (("heute", None), ("gestern", "nut-prev"), ("in der Zukunft", "nut-next")):
+                if nav:
+                    to_today()
+                    page.locator(f'[data-act="{nav}"]').click(); page.wait_for_timeout(250)
+                txt = page.inner_text("#view")
+                check(f"Ernährung {lbl}: kein Formular und keine Knöpfe zum Eintragen, Bearbeiten oder Löschen",
+                      page.locator(meal_ui).count() == 0 and "Essen eintragen" not in txt and page.evaluate(only_nf), txt[:200].replace("\n", " "))
+            to_today()
+            before_meals = page.evaluate("(d)=>JSON.stringify((window.__MOCK_STORE__.get('days',d)||{}).meals||[])", today)
+            page.locator('[data-act="meal-toggle"]').first.click(); page.wait_for_timeout(200)
+            check("Auf- und Zuklappen schreibt nichts in die Datenbank",
+                  page.evaluate("(d)=>JSON.stringify((window.__MOCK_STORE__.get('days',d)||{}).meals||[])", today) == before_meals)
+            # Eine von Claude geänderte oder gelöschte Mahlzeit verschwindet live aus der Ansicht
+            page.evaluate("(d)=>{const cur=window.__MOCK_STORE__.get('days',d);cur.meals=cur.meals.filter(m=>m.name!=='Haferflocken');window.__MOCK_STORE__.remoteUpsert('days',d,cur);}", today)
+            page.wait_for_timeout(500)
+            check("Von Claude gelöschte Mahlzeit verschwindet ohne Neuladen", "Haferflocken" not in page.inner_text("#view") and "Kartoffeln mit Hähnchen" in page.inner_text("#view"))
             # Der Hinweis „Noch keine Nährwerte geplant“ ist an einem künftigen Tag so groß wie an einem vergangenen Tag ohne Plan
             pad = "(()=>{const e=document.getElementById('np-empty');if(!e)return null;const s=getComputedStyle(e);return s.paddingTop+'/'+s.paddingBottom;})()"
             page.locator('[data-act="nut-next"]').click(); page.wait_for_timeout(250)
