@@ -400,9 +400,9 @@ const ciDate=()=>UI.tab==='overview'?(UI.ciDate||TODAY()):(UI.trainDate||TODAY()
    „Bestätigen“ klappt die Karte zu einer Zusammenfassung ein (checkin.confirmedAt), „Bearbeiten“ klappt sie wieder auf. */
 const SEV_LABEL={none:'keiner',light:'leicht',medium:'mittel',strong:'stark'};
 const SLEEPQ={bad:'schlecht',ok:'okay',good:'gut'},STRESSQ={low:'niedrig',mid:'mittel',high:'hoch'};
-/* Körperumfänge in cm (days/<Datum>.measures). Bauch = auf Nabelhöhe, Hüfte = breiteste Stelle, Brust = auf Brustwarzenhöhe,
+/* Körperumfänge in cm (days/<Datum>.measures). Bauch = auf Nabelhöhe, Hüfte = breiteste Stelle, Brust = auf Brustwarzenhöhe, Oberkörper = um die breiteste Stelle der Schultern,
    Arme entspannt, Oberschenkel in der Mitte. Immer morgens, gleiche Stelle, Maßband locker anliegend. */
-const MEASURES=[['waist','Bauch (Nabelhöhe)'],['chest','Brust'],['hip','Hüfte'],['armL','Arm links'],['armR','Arm rechts'],['thighL','Oberschenkel links'],['thighR','Oberschenkel rechts']];
+const MEASURES=[['waist','Bauch (Nabelhöhe)'],['chest','Brust'],['torso','Oberkörper (Schultern)'],['hip','Hüfte'],['armL','Arm links'],['armR','Arm rechts'],['thighL','Oberschenkel links'],['thighR','Oberschenkel rechts']];
 const measOf=d=>(d&&d.measures&&typeof d.measures==='object')?d.measures:{};
 function ciSummaryHtml(date){
   const d=S.days[date]||{},c=d.checkin||{};

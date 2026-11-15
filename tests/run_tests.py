@@ -207,7 +207,7 @@ def run(rows, today, label, full):
 
         # 3c. Körperumfänge im Daily Check-in: days/<Datum>.measures in cm
         if not full:
-            check("Daily Check-in hat 7 Umfangsfelder", page.locator("#ci-form [data-bind='ci-m']").count() == 7)
+            check("Daily Check-in hat 8 Umfangsfelder", page.locator("#ci-form [data-bind='ci-m']").count() == 8)
             page.fill("#ci-m-waist", "84,5"); page.fill("#ci-m-armL", "36"); page.fill("#ci-m-thighR", "58,2"); page.fill("#ci-m-armR", "5")
             page.locator("#ci-ctx").click(); page.wait_for_timeout(900)
             got = page.evaluate("(d)=>{const x=window.__MOCK_STORE__.get('days',d);return x&&x.measures||null}", today)
