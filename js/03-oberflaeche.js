@@ -49,7 +49,7 @@ function render(){
   if(UI.focusSel){const f=$(UI.focusSel);UI.focusSel=null;if(f)try{f.focus({preventScroll:true});}catch(e){}}
 }
 $('#view').addEventListener('click',e=>{
-  if(UI.confirmDel&&!e.target.closest('[data-confirm]')){UI.confirmDel=null;if(UI.tab==='training'||UI.tab==='overview')render();}
+  if(UI.confirmDel&&!e.target.closest('[data-confirm]')){UI.confirmDel=null;if(UI.tab==='training'||UI.tab==='overview'||UI.tab==='nutrition')render();}
   const t=e.target.closest('[data-act]');
   if(!t)return;
   const f=ACT[t.dataset.act];

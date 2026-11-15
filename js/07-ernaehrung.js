@@ -1,5 +1,5 @@
 'use strict';
-/* Reiter Ernährung: Tagesansicht und Mahlzeiten (nur Anzeige; eingetragen, geändert und gelöscht wird von Claude per Datenbankfunktion) */
+/* Reiter Ernährung: Tagesansicht und Mahlzeiten (Anzeige und Löschen; eingetragen und geändert wird von Claude per Datenbankfunktion) */
 /* ---------- Ernährung ---------- */
 function nutTile(label,cls,fillCls,eaten,target,unit){
   const pct=target>0?Math.min(100,eaten/target*100):0;
@@ -12,14 +12,18 @@ function planTile(label,cls,fillCls,target,unit){
 }
 const numCells=t=>'<td>'+f0(t.kcal)+'</td><td>'+f0(t.protein)+'</td><td>'+f0(t.carbs)+'</td><td>'+f0(t.fat)+'</td>';
 
-/* Nur Anzeige: Mahlzeiten trägt Claude ein, ändert und löscht sie (log_meal, update_meal, delete_meal). Die Seite schreibt nie in meals. */
+/* Mahlzeiten trägt Claude ein und ändert sie (log_meal, update_meal, delete_meal). In der Seite kann man eine ganze Mahlzeit nur löschen (mit Rückfrage), sonst nichts. */
 function mealRows(m){
   const ing=hasIng(m),t=mealTot(m),open=ing&&!!UI.mealOpen[m.id];
   const nm=ing
     ?'<button type="button" class="mexp" data-act="meal-toggle" data-id="'+esc(m.id)+'" aria-expanded="'+open+'" aria-label="Zutaten von '+esc(m.name)+' '+(open?'einklappen':'aufklappen')+'">'+I.right+'<span class="mn">'+esc(m.name)+' <span class="tag">'+m.ingredients.length+(m.ingredients.length===1?' Zutat':' Zutaten')+'</span></span></button>'
     :esc(m.name);
-  let html='<tr class="mrow"><td>'+nm+'</td>'+numCells(t)+'</tr>';
-  if(open)html+=m.ingredients.map(it=>'<tr class="ing"><td>'+esc(it.name)+'</td>'+numCells(nums(it))+'</tr>').join('');
+  const armed=UI.confirmDel==='meal:'+m.id;
+  const del=armed
+    ?'<button type="button" class="iconb armed" data-confirm data-act="meal-del" data-id="'+esc(m.id)+'" aria-label="'+esc(m.name)+' wirklich löschen?" title="Wirklich löschen?"><span class="lt">Löschen?</span>'+I.trash+'</button>'
+    :'<button type="button" class="iconb" data-confirm data-act="meal-del" data-id="'+esc(m.id)+'" aria-label="'+esc(m.name)+' löschen" title="Löschen">'+I.trash+'</button>';
+  let html='<tr class="mrow"><td>'+nm+'</td>'+numCells(t)+'<td><div class="macts">'+del+'</div></td></tr>';
+  if(open)html+=m.ingredients.map(it=>'<tr class="ing"><td>'+esc(it.name)+'</td>'+numCells(nums(it))+'<td></td></tr>').join('');
   return html;
 }
 
@@ -64,7 +68,7 @@ VIEWS.nutrition=function(){
   const minDate=firstDate(),maxDate=addDays(today,NUT_AHEAD_DAYS),future=date>today;
   const rows=ms.map(mealRows).join('');
   const list=ms.length
-    ?'<div class="tablewrap"><table class="mt meals"><thead><tr><th>Eintrag</th><th>kcal</th><th>P</th><th>KH</th><th>F</th></tr></thead><tbody>'+rows+'</tbody>'
+    ?'<div class="tablewrap"><table class="mt"><thead><tr><th>Eintrag</th><th>kcal</th><th>P</th><th>KH</th><th>F</th><th></th></tr></thead><tbody>'+rows+'</tbody>'
       +'</table></div>'
     :'<div class="empty"><b>Noch nichts eingetragen</b>Mahlzeiten trägt Claude für dich ein.</div>';
   return '<div class="pagehead"><div class="kicker">'+esc(longDate(TODAY()))+'</div><h1 class="title">Ernährung</h1>'
@@ -102,9 +106,20 @@ $('#view').addEventListener('submit',e=>{
 
 /* Zutaten einer Mahlzeit auf- und zuklappen */
 ACT['meal-toggle']=t=>{const id=t.dataset.id;UI.mealOpen[id]=!UI.mealOpen[id];render();};
+/* Eine ganze Mahlzeit löschen: erster Klick fragt nach („Löschen?“), der zweite löscht */
+ACT['meal-del']=t=>{
+  const id=t.dataset.id,k='meal:'+id,date=nutDate();
+  if(UI.confirmDel!==k){UI.confirmDel=k;render();return;}
+  UI.confirmDel=null;
+  const d=dayRef(date);
+  d.meals=(d.meals||[]).filter(m=>m.id!==id);
+  saveDay(date,{meals:d.meals});
+  delete UI.mealOpen[id];
+  render();toast('Eintrag gelöscht');
+};
 
 /* ---------- Tag wechseln ---------- */
-const resetNutEdit=()=>{UI.nfDraft=null;};
+const resetNutEdit=()=>{UI.nfDraft=null;UI.confirmDel=null;};
 ACT['nut-prev']=()=>{resetNutEdit();const n=addDays(UI.nutDate||TODAY(),-1);UI.nutDate=n===TODAY()?null:n;render();};
 ACT['nut-next']=()=>{const n=addDays(UI.nutDate||TODAY(),1);if(n>addDays(TODAY(),NUT_AHEAD_DAYS))return;resetNutEdit();UI.nutDate=n===TODAY()?null:n;render();};
 ACT['nut-today']=()=>{resetNutEdit();UI.nutDate=null;render();};

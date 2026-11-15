@@ -74,11 +74,12 @@ Details:
 - **Fehler:** Netzfehler → `unavailable` (die Schreibwarteschlange versucht es einmal erneut), fehlende Rechte/abgelaufene Sitzung →
   `revoked` („Melde dich neu an“), `P0002` → `not-found`.
 
-## 4b. Mahlzeiten: nur Claude schreibt (`log_meal`, `update_meal`, `delete_meal`)
+## 4b. Mahlzeiten: Claude trägt ein und ändert (`log_meal`, `update_meal`, `delete_meal`)
 
-Der Reiter Ernährung **zeigt Mahlzeiten nur an**: Es gibt dort kein Formular zum Eintragen und keine Knöpfe zum Bearbeiten,
-Aufteilen oder Löschen, auch nicht für Zutaten. Mahlzeiten legt allein Claude an, ändert und löscht sie (zum Beispiel mit dem
-Skill „logge-essen“), über drei Datenbankfunktionen. So muss niemand SQL für das Dokumentformat zusammenbauen, und kcal und Makros
+Im Reiter Ernährung kann der Nutzer Mahlzeiten **nur ansehen und ganze Mahlzeiten löschen** (Mülleimer, zweiter Klick bestätigt;
+auf dem Handy wird der Mülleimer dafür orange). Es gibt kein Formular zum Eintragen und keine Knöpfe zum Bearbeiten, Umbenennen,
+Aufteilen oder für einzelne Zutaten. Mahlzeiten legt allein Claude an und ändert sie (zum Beispiel mit dem Skill „logge-essen“);
+Claude kann sie auch löschen. Dafür gibt es drei Datenbankfunktionen. So muss niemand SQL für das Dokumentformat zusammenbauen, und kcal und Makros
 werden überall gleich gerechnet. Offene Seiten zeigen jede Änderung sofort (Realtime). Die Sperre gilt nur in der Oberfläche: in der
 Datenbank dürfte der angemeldete Eigentümer technisch weiter schreiben (wie bei `wissen`).
 
@@ -215,8 +216,9 @@ Stärke des Schutzes hängt am Passwort. Sicherungskopien enthalten persönliche
 - Ohne Anmeldung erscheint nur die Anmeldeseite, keine Daten im Dokument; falsches Passwort wird abgewiesen.
 - Nach der Anmeldung zeichnen alle vier Reiter ohne Konsolen- oder CSP-Fehler.
 - Wasser eintragen und ein Wissen-Feld speichern landen in der (nachgebauten) Datenbank.
-- Die Ernährung zeigt Mahlzeiten nur an (heute, gestern, künftig): kein Formular, keine Knöpfe zum Bearbeiten oder Löschen;
-  Aufklappen schreibt nichts, und eine von Claude gelöschte Mahlzeit verschwindet live.
+- Die Ernährung hat (heute, gestern, künftig) kein Formular und keine Knöpfe zum Eintragen oder Bearbeiten; Aufklappen schreibt
+  nichts, eine von Claude gelöschte Mahlzeit verschwindet live. Jede Mahlzeit hat einen Löschknopf (Zutaten keinen): erster Klick
+  fragt nach, Klick daneben bricht ab, zweiter Klick löscht.
 - Eine Änderung „von einem anderen Gerät“ erscheint ohne Neuladen.
 - Ein verweigertes Speichern zeigt eine Meldung, die Seite bleibt benutzbar.
 - Die Kopfzeile hat keinen Backup-Knopf und keinen Claude-Knopf mehr, sondern nur noch Darstellung und Abmelden.

@@ -443,7 +443,9 @@ textarea.field{resize:vertical;min-height:84px}
 .mt td{padding:15px 8px;border-top:1px solid var(--line);text-align:right;font-weight:700;font-size:16px}
 .mt td:first-child{font-weight:500;overflow-wrap:anywhere;hyphens:auto}
 .mt td:last-child,.mt th:last-child{width:84px;padding-right:0}
-.mt.meals td:last-child,.mt.meals th:last-child{width:auto}
+.mt .macts{display:flex;justify-content:flex-end}
+.mt .macts .iconb.armed svg{display:none}
+@media (max-width:600px){.mt td:last-child,.mt th:last-child{width:44px;padding-left:4px}.mt .macts .iconb.armed{width:36px;padding:0}.mt .macts .iconb.armed .lt{display:none}.mt .macts .iconb.armed svg{display:block}}
 .navrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .navrow .datenav span{min-width:0;padding:0 12px;white-space:nowrap}
 /* Zutaten */
