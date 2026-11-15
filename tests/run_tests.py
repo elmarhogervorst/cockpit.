@@ -134,6 +134,42 @@ def run(rows, today, label, full):
             if tg.count():
                 tg.click(); page.wait_for_timeout(300)
             check("Zutaten lassen sich aufklappen", "Kartoffeln, 300 g" in page.inner_text("#view") and "Hähnchen, 150 g" in page.inner_text("#view"))
+            # Mahlzeiten trägt Claude ein und ändert sie (Datenbankfunktionen). In der Seite gibt es kein Formular und nichts zum Bearbeiten, nur Löschen
+            meal_ui = ("#meal-form, #meal-card, #meal-edit-form, [data-act^='meal-edit'], [data-act='meal-split'], "
+                       "[data-act^='ing-'], [data-act^='mf-'], [data-form^='ing-']")
+            def to_today():
+                t = page.locator('[data-act="nut-today"]')
+                if not t.is_disabled():
+                    t.click(); page.wait_for_timeout(150)
+            only_nf = "[...document.querySelectorAll('#view input, #view textarea, #view select')].every(e=>e.id==='nf-note')"
+            for lbl, nav in (("heute", None), ("gestern", "nut-prev"), ("in der Zukunft", "nut-next")):
+                if nav:
+                    to_today()
+                    page.locator(f'[data-act="{nav}"]').click(); page.wait_for_timeout(250)
+                txt = page.inner_text("#view")
+                check(f"Ernährung {lbl}: kein Formular und keine Knöpfe zum Eintragen oder Bearbeiten",
+                      page.locator(meal_ui).count() == 0 and "Essen eintragen" not in txt and page.evaluate(only_nf), txt[:200].replace("\n", " "))
+            to_today()
+            before_meals = page.evaluate("(d)=>JSON.stringify((window.__MOCK_STORE__.get('days',d)||{}).meals||[])", today)
+            page.locator('[data-act="meal-toggle"]').first.click(); page.wait_for_timeout(200)
+            check("Auf- und Zuklappen schreibt nichts in die Datenbank",
+                  page.evaluate("(d)=>JSON.stringify((window.__MOCK_STORE__.get('days',d)||{}).meals||[])", today) == before_meals)
+            # Eine von Claude geänderte oder gelöschte Mahlzeit verschwindet live aus der Ansicht
+            page.evaluate("(d)=>{const cur=window.__MOCK_STORE__.get('days',d);cur.meals=cur.meals.filter(m=>m.name!=='Haferflocken');window.__MOCK_STORE__.remoteUpsert('days',d,cur);}", today)
+            page.wait_for_timeout(500)
+            check("Von Claude gelöschte Mahlzeit verschwindet ohne Neuladen", "Haferflocken" not in page.inner_text("#view") and "Kartoffeln mit Hähnchen" in page.inner_text("#view"))
+            # Löschen in der Seite: nur ganze Mahlzeiten, mit Rückfrage („Löschen?“), Zutaten haben keinen Löschknopf
+            meals_now = lambda: page.evaluate("(d)=>((window.__MOCK_STORE__.get('days',d)||{}).meals||[]).map(m=>m.name)", today)
+            check("Jede Mahlzeit hat genau einen Löschknopf, Zutaten keinen",
+                  page.locator("#view tr.mrow [data-act='meal-del']").count() == page.locator("#view tr.mrow").count() == 1
+                  and page.locator("#view tr.ing [data-act]").count() == 0)
+            page.locator("#view [data-act='meal-del']").first.click(); page.wait_for_timeout(250)
+            check("Erster Klick auf Löschen fragt nur nach", page.locator("#view [data-act='meal-del'].armed").count() == 1 and "Kartoffeln mit Hähnchen" in meals_now())
+            page.locator("#view .kicker").first.click(); page.wait_for_timeout(250)
+            check("Klick daneben bricht das Löschen ab", page.locator("#view [data-act='meal-del'].armed").count() == 0 and "Kartoffeln mit Hähnchen" in meals_now())
+            page.locator("#view [data-act='meal-del']").first.click(); page.wait_for_timeout(200)
+            page.locator("#view [data-act='meal-del']").first.click(); page.wait_for_timeout(600)
+            check("Zweiter Klick löscht die Mahlzeit in der Datenbank", "Kartoffeln mit Hähnchen" not in meals_now() and "Kartoffeln mit Hähnchen" not in page.inner_text("#view"), meals_now())
             # Der Hinweis „Noch keine Nährwerte geplant“ ist an einem künftigen Tag so groß wie an einem vergangenen Tag ohne Plan
             pad = "(()=>{const e=document.getElementById('np-empty');if(!e)return null;const s=getComputedStyle(e);return s.paddingTop+'/'+s.paddingBottom;})()"
             page.locator('[data-act="nut-next"]').click(); page.wait_for_timeout(250)

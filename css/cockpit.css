@@ -437,9 +437,6 @@ textarea.field{resize:vertical;min-height:84px}
 .cnt{text-align:right;font-size:12px;color:var(--ink-3);margin-top:6px}
 
 /* Ernährung */
-.meal-form{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,92px) auto;gap:10px;align-items:end}
-@media (max-width:900px){.meal-form{grid-template-columns:repeat(4,minmax(0,1fr))}.meal-form .nm,.meal-form .go{grid-column:1 / -1}}
-.meal-form .field{text-align:center}.meal-form .nm .field{text-align:left}
 .mt{width:100%;border-collapse:collapse}
 .mt th{font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);text-align:right;padding:0 8px 10px}
 .mt th:first-child,.mt td:first-child{text-align:left;padding-left:0}
@@ -447,9 +444,8 @@ textarea.field{resize:vertical;min-height:84px}
 .mt td:first-child{font-weight:500;overflow-wrap:anywhere;hyphens:auto}
 .mt td:last-child,.mt th:last-child{width:84px;padding-right:0}
 .mt .macts{display:flex;justify-content:flex-end}
-.mt tr.editing td{text-align:left;font-weight:400;width:auto;padding:14px 0 18px}
-.mt tr.editing .lbl{text-align:left}
-.meal-form.edit .go{display:flex;gap:8px;flex-wrap:wrap}
+.mt .macts .iconb.armed svg{display:none}
+@media (max-width:600px){.mt td:last-child,.mt th:last-child{width:44px;padding-left:4px}.mt .macts .iconb.armed{width:36px;padding:0}.mt .macts .iconb.armed .lt{display:none}.mt .macts .iconb.armed svg{display:block}}
 .navrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .navrow .datenav span{min-width:0;padding:0 12px;white-space:nowrap}
 /* Zutaten */
@@ -460,24 +456,9 @@ textarea.field{resize:vertical;min-height:84px}
 .mt .mexp .tag{margin-left:2px;white-space:nowrap}
 .mt tr.ing td{padding:9px 8px;font-size:14px;font-weight:500;color:var(--ink-2);border-top:1px dashed var(--line)}
 .mt tr.ing td:first-child{padding-left:22px}
-.mt tr.ing .iconb{width:30px;height:30px}
-.mt tr.ing-add td,.mt tr.ing-edit td{text-align:left;font-weight:400;width:auto;padding:12px 0 16px 22px;border-top:1px dashed var(--line)}
-.mt tr.ing-add .lbl,.mt tr.ing-edit .lbl{text-align:left}
-.mt tr.ing-more td{text-align:left;font-weight:400;width:auto;padding:4px 0 12px 22px;border-top:1px dashed var(--line)}
-.meal-form .ing-wrap,.meal-form .ing-tg,.meal-form .hint{grid-column:1 / -1}
-.meal-form .hint{font-size:13px;color:var(--ink-2);margin:0}
-.meal-form.ing-meal{grid-template-columns:minmax(0,1fr) auto}
-.meal-form.ing-row{grid-template-columns:minmax(0,1fr) repeat(4,92px)}
-.ing-list{display:grid;gap:14px;margin-bottom:12px}
-.nmrow{display:flex;gap:6px;align-items:center}
-.nmrow .field{flex:1;min-width:0}
-.ing-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-bottom:12px}
-.ing-sum{font-size:14px;color:var(--ink-2)}
-.ing-sum b{color:var(--ink);font-family:var(--display);font-size:18px;letter-spacing:-.02em}
 .linkb{border:0;background:none;padding:0;font-size:13px;color:var(--ink-2);text-decoration:underline}
 .linkb:hover{color:var(--ink)}
-@media (max-width:900px){.meal-form.ing-row{grid-template-columns:repeat(4,minmax(0,1fr))}.meal-form.ing-meal{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:600px){.mt tr.ing-more td{padding-left:14px}.mt tr.ing-add td,.mt tr.ing-edit td{padding-left:10px}.mt tr.ing td:first-child{padding-left:14px}}
+@media (max-width:600px){.mt tr.ing td:first-child{padding-left:14px}}
 .mt tfoot td{border-top:2px solid var(--ink);font-weight:500}
 .mt tfoot .tot{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.03em}
 .mt tfoot .tot small{font-family:var(--body);font-weight:400;font-size:13px;color:var(--ink-2);letter-spacing:0;margin-left:6px}

@@ -74,20 +74,42 @@ Details:
 - **Fehler:** Netzfehler → `unavailable` (die Schreibwarteschlange versucht es einmal erneut), fehlende Rechte/abgelaufene Sitzung →
   `revoked` („Melde dich neu an“), `P0002` → `not-found`.
 
-## 4b. Einträge von außen: `log_meal`
+## 4b. Mahlzeiten: Claude trägt ein und ändert (`log_meal`, `update_meal`, `delete_meal`)
 
-Damit Werkzeuge außerhalb der Seite (zum Beispiel der Claude-Skill „logge-essen“) Mahlzeiten eintragen können, ohne SQL für
-das Dokumentformat zusammenzubauen, gibt es die Datenbankfunktion `public.log_meal(p_meal jsonb, p_day date default null)`
-(`supabase/migrations/0003_mahlzeit_eintragen.sql`). Sie macht dasselbe wie das Formular im Reiter Ernährung:
+Im Reiter Ernährung kann der Nutzer Mahlzeiten **nur ansehen und ganze Mahlzeiten löschen** (Mülleimer, zweiter Klick bestätigt;
+auf dem Handy wird der Mülleimer dafür orange). Es gibt kein Formular zum Eintragen und keine Knöpfe zum Bearbeiten, Umbenennen,
+Aufteilen oder für einzelne Zutaten. Mahlzeiten legt allein Claude an und ändert sie (zum Beispiel mit dem Skill „logge-essen“);
+Claude kann sie auch löschen. Dafür gibt es drei Datenbankfunktionen. So muss niemand SQL für das Dokumentformat zusammenbauen, und kcal und Makros
+werden überall gleich gerechnet. Offene Seiten zeigen jede Änderung sofort (Realtime). Die Sperre gilt nur in der Oberfläche: in der
+Datenbank dürfte der angemeldete Eigentümer technisch weiter schreiben (wie bei `wissen`).
+
+**`public.log_meal(p_meal jsonb, p_day date default null)`** (`supabase/migrations/0003_mahlzeit_eintragen.sql`): Mahlzeit anlegen.
 
 - hängt die Mahlzeit an `days/<Datum>.meals` an und legt den Tag bei Bedarf an (ein Aufruf = ein atomarer Schritt),
 - bei `ingredients` ergeben sich kcal und Makros aus der Summe der Zutaten (kcal ganzzahlig, Makros eine Nachkommastelle, wie in
   `js/04-berechnungen.js`), fehlende kcal werden aus den Makros gerechnet (4/4/9),
 - ohne Datum gilt heute (Europe/Berlin), erlaubt sind Tage von einem Jahr zurück bis 14 Tage voraus,
-- läuft mit den Rechten des Aufrufers: nur der Eigentümer kann sie ausführen, `anon` und fremde Konten werden abgewiesen,
-- gibt Eintrag, Tagessumme und Tagesziel zurück. Offene Seiten zeigen den neuen Eintrag sofort (Realtime).
+- gibt Eintrag, Tagessumme und Tagesziel zurück.
 
 Eingabe, Beispiel: `{"name":"Kartoffeln mit Hähnchen","ingredients":[{"name":"Kartoffeln, 300 g","kcal":230,"protein":6,"carbs":50,"fat":0.3}, …]}`.
+
+**`public.update_meal(p_day date, p_meal_id text, p_meal jsonb)`** (`supabase/migrations/0005_mahlzeit_aendern_loeschen.sql`):
+Mahlzeit ändern. Angesprochen wird sie über Tag und `id` (`days/<Datum>.meals[].id`). `id`, Eintragszeit `at` und Reihenfolge
+bleiben erhalten. `p_meal` hat das Format von `log_meal`:
+
+- nur `name`: nur der Name ändert sich, Werte und Zutaten bleiben,
+- `ingredients` (nicht leer): die Zutatenliste wird komplett ersetzt, kcal und Makros ergeben sich aus ihrer Summe (eine einzelne
+  Zutat ändern = Liste lesen, anpassen, vollständig zurückgeben),
+- `kcal`/`protein`/`carbs`/`fat`: die Werte werden ersetzt (fehlende Makros zählen als 0), eine bisherige Zutatenliste entfällt,
+- `name` fehlt oder ist leer: der bisherige Name bleibt,
+- gibt `vorher`, `eintrag`, Tagessumme und Tagesziel zurück.
+
+**`public.delete_meal(p_day date, p_meal_id text)`** (ebenfalls `0005`): Mahlzeit löschen. Gibt den gelöschten Eintrag
+(`geloescht`), die Tagessumme und das Tagesziel zurück; mit `log_meal` lässt er sich bei Bedarf wieder anlegen.
+
+Alle drei laufen mit den Rechten des Aufrufers (`security invoker`): nur der Eigentümer kann sie ausführen, `anon` und fremde
+Konten werden abgewiesen. Unbekannter Tag oder unbekannte `id` ergibt den Fehlercode `P0002` mit einer Meldung, die Tag und `id`
+nennt.
 
 ## 5. Daten (Sammlungen)
 
@@ -127,7 +149,7 @@ gewogen wurde.
 ### Claude-Anweisung
 
 `ki/systemprompt` enthält den Ablauf (auswerten, Training planen, Nährwerte planen), wo die Daten liegen (mit Verweis auf
-`wissen/datenmodell`), die Schreibregeln (`log_meal`, `merge_doc`) und Grundsätze. Der Text liegt nur in der Datenbank; die
+`wissen/datenmodell`), die Schreibregeln (`log_meal`, `update_meal`, `delete_meal`, `merge_doc`) und Grundsätze. Der Text liegt nur in der Datenbank; die
 Oberfläche liest ihn nicht und zeigt ihn nirgends an (es gibt keinen Claude-Knopf mehr in der Kopfzeile). Geändert wird er, wie
 alles andere, über die Datenbank.
 
@@ -194,6 +216,9 @@ Stärke des Schutzes hängt am Passwort. Sicherungskopien enthalten persönliche
 - Ohne Anmeldung erscheint nur die Anmeldeseite, keine Daten im Dokument; falsches Passwort wird abgewiesen.
 - Nach der Anmeldung zeichnen alle vier Reiter ohne Konsolen- oder CSP-Fehler.
 - Wasser eintragen und ein Wissen-Feld speichern landen in der (nachgebauten) Datenbank.
+- Die Ernährung hat (heute, gestern, künftig) kein Formular und keine Knöpfe zum Eintragen oder Bearbeiten; Aufklappen schreibt
+  nichts, eine von Claude gelöschte Mahlzeit verschwindet live. Jede Mahlzeit hat einen Löschknopf (Zutaten keinen): erster Klick
+  fragt nach, Klick daneben bricht ab, zweiter Klick löscht.
 - Eine Änderung „von einem anderen Gerät“ erscheint ohne Neuladen.
 - Ein verweigertes Speichern zeigt eine Meldung, die Seite bleibt benutzbar.
 - Die Kopfzeile hat keinen Backup-Knopf und keinen Claude-Knopf mehr, sondern nur noch Darstellung und Abmelden.
